@@ -8,7 +8,7 @@
         Responsibility: Tony Parker
 */
 
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 #include "CFCollections_Internal.h"
 
 #if TARGET_OS_OSX

@@ -25,7 +25,7 @@
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFStream.h>
 #include <CoreFoundation/CFCalendar.h>
-#include "CFLocaleInternal.h"
+#include <CoreFoundation/CFLocaleInternal.h>
 #include <limits.h>
 #include <float.h>
 #include <string.h>

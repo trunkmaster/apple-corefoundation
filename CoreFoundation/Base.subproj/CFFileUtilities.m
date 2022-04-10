@@ -8,7 +8,7 @@
 	Responsibility: Tony Parker
 */
 
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include <CoreFoundation/CFPriv.h>
 
 #include <assert.h>

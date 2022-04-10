@@ -9,7 +9,7 @@
 */
 
 
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include <CoreFoundation/CFPriv.h>
 #if TARGET_OS_MAC
     #include <stdlib.h>

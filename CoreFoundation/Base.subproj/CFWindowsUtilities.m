@@ -13,7 +13,7 @@
     
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFString.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include "CFPriv.h"
 
 #include <shlobj.h>

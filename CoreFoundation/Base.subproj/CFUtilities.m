@@ -16,9 +16,9 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFPriv.h>
-#include "CFInternal.h"
-#include "CFLocaleInternal.h"
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/GSCFInternal.h>
+#include <CoreFoundation/CFLocaleInternal.h>
+#include <CoreFoundation/CFBundle_Internal.h>
 #include <CoreFoundation/CFPriv.h>
 #if TARGET_OS_MAC || TARGET_OS_WIN32
 #include <CoreFoundation/CFBundle.h>

@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <unicode/uchar.h>
 #if TARGET_OS_MAC || TARGET_OS_WIN32 || TARGET_OS_LINUX
-#include "CFLocaleInternal.h"
+#include <CoreFoundation/CFLocaleInternal.h>
 #include "CFStringLocalizedFormattingInternal.h"
 #endif
 #include <stdarg.h>

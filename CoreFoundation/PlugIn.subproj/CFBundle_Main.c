@@ -9,7 +9,7 @@
  */
 
 #include <CoreFoundation/CFBundle.h>
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 
 

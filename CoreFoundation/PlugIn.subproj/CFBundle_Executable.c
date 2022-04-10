@@ -10,7 +10,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFBundle.h>
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 #if TARGET_OS_IPHONE
 #include <dlfcn.h>

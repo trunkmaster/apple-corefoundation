@@ -6,7 +6,7 @@ libCoreFoundation_HEADER_FILES = CFAsmMacros.h CFAvailability.h CFBase.h CFByteO
 libCoreFoundation_HEADER_FILES_INSTALL_DIR = CoreFoundation
 libCoreFoundation_OBJC_FILES += CFBase.m CFFileUtilities.m CFKnownLocations.m CFPlatform.m CFRuntime.m CFSortFunctions.m CFSystemDirectories.m CFUtilities.m CFUUID.m CFWindowsUtilities.m
 libCoreFoundation_INCLUDE_DIRS += -I../Headers
-libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF
+libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function
 
 # Set up libdispatch
 libCoreFoundation_OBJCFLAGS	+= -D__HAS_DISPATCH__

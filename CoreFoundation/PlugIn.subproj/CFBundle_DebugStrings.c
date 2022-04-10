@@ -9,7 +9,7 @@
  */
 
 #include <assert.h>
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 // Directionality formatting codepoints
 #define UTF16_RIGHT_TO_LEFT_OVERRIDE 0x202e

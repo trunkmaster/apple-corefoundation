@@ -10,7 +10,7 @@
 #if !defined(__COREFOUNDATION_CFPLUGIN_FACTORY__)
 #define __COREFOUNDATION_CFPLUGIN_FACTORY__ 1
 
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 CF_EXTERN_C_BEGIN
 

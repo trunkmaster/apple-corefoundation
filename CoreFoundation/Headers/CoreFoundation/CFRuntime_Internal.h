@@ -11,6 +11,7 @@
 #define CFRuntime_Internal_h
 
 #include <CoreFoundation/CFRuntime.h>
+#include <CoreFoundation/GSCFInternal.h>
 
 // Note: Platform differences leave us with some holes in the table, but that's ok.
 

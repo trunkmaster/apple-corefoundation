@@ -24,7 +24,7 @@
 #include <TargetConditionals.h>
 #endif
 
-#import <CoreFoundation/ForSwiftFoundationOnly.h>
+#import <CoreFoundation/GSCFInternal.h>
 
 #define __CF_COMPILE_YEAR__	(__DATE__[7] * 1000 + __DATE__[8] * 100 + __DATE__[9] * 10 + __DATE__[10] - 53328)
 #define __CF_COMPILE_MONTH__	((__DATE__[1] + __DATE__[2] == 207) ? 1 : \

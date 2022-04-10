@@ -16,7 +16,7 @@
 */
 
 #include <CoreFoundation/CFPriv.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 
 #if TARGET_OS_MAC
 

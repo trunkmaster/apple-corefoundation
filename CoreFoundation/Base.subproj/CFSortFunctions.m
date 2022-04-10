@@ -9,7 +9,7 @@
 */
 
 #include <CoreFoundation/CFBase.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #if __HAS_DISPATCH__
 #include <dispatch/dispatch.h>
 #if TARGET_OS_MAC && __has_include(<dispatch/private.h>)
@@ -19,7 +19,7 @@
 #endif // TARGET_OS_MAC && __has_include(<dispatch/private.h>)
 #endif // __HAS_DISPATCH__
 #include "CFLogUtilities.h"
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include "CFOverflow.h"
 
 #if __has_include(<checkint.h>)

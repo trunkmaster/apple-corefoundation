@@ -20,8 +20,8 @@
 #include <CoreFoundation/CFNumber.h>
 #include "CFInternal.h"
 #include "CFRuntime_Internal.h"
-#include "CFBundle_Internal.h"
-#include "CFLocaleInternal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
+#include <CoreFoundation/CFLocaleInternal.h>
 #include <stdatomic.h>
 #if TARGET_OS_MAC || TARGET_OS_WIN32 || TARGET_OS_LINUX || TARGET_OS_BSD
 #include <unicode/uloc.h>           // ICU locales

@@ -11,7 +11,7 @@
 #include <CoreFoundation/CFBundle.h>
 #include <CoreFoundation/CFNumber.h>
 #include <CoreFoundation/CFError_Private.h>
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 #include <CoreFoundation/CFByteOrder.h>
 #include <CoreFoundation/CFURLAccess.h>
 

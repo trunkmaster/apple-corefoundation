@@ -8,7 +8,7 @@
         Responsibility: Tony Parker
 */
 
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 #include <CoreFoundation/CFPropertyList.h>
 #include <CoreFoundation/CFNumber.h>
 #include <CoreFoundation/CFSet.h>

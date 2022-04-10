@@ -11,7 +11,7 @@
 
 #include <CoreFoundation/CFString.h>
 #include "CFPriv.h"
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include "CFUtilities.h"
 
 #include <assert.h>

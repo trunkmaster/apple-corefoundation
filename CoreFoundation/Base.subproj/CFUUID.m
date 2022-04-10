@@ -9,7 +9,7 @@
 */
 
 #include <CoreFoundation/CFUUID.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include "CFRuntime_Internal.h"
 
 #if __has_include(<os/lock_private.h>)

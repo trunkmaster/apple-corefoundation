@@ -13,8 +13,8 @@
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFRuntime.h>
 #include "CFRuntime_Internal.h"
-#include "CFInternal.h"
-#include "CFBasicHash.h"
+#include <CoreFoundation/GSCFInternal.h>
+#include <CoreFoundation/CFBasicHash.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -11,7 +11,7 @@
 #if 0
 
 #include <CoreFoundation/CFBundle.h>
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 static CFMutableDictionaryRef _bundlesByIdentifier = NULL;
 static CFMutableDictionaryRef _bundlesByURL = NULL;

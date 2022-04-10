@@ -8,7 +8,7 @@
         Responsibility: Tony Parker
 */
 
-#include "CFBundle_Internal.h"
+#include <CoreFoundation/CFBundle_Internal.h>
 
 #if BINARY_SUPPORT_DYLD
 // Import the mach-o headers that define the macho magic numbers
