@@ -10,7 +10,7 @@
 
 #include <CoreFoundation/CFUUID.h>
 #include <CoreFoundation/GSCFInternal.h>
-#include "CFRuntime_Internal.h"
+#include <CoreFoundation/CFRuntime_Internal.h>
 
 #if __has_include(<os/lock_private.h>)
 #include <os/lock_private.h>

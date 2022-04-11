@@ -6,6 +6,7 @@
 #define CFBundle_SplitFileName_h
 
 #include <CoreFoundation/CFString.h>
+#include <CoreFoundation/GSCFInternal.h>
 
 typedef enum {
     _CFBundleFileVersionNoProductNoPlatform = 1,

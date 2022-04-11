@@ -7,10 +7,10 @@
 	See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 */
 
-#include "CFKnownLocations.h"
+#include <CoreFoundation/CFKnownLocations.h>
 
 #include <CoreFoundation/CFString.h>
-#include "CFPriv.h"
+#include <CoreFoundation/CFPriv.h>
 #include <CoreFoundation/GSCFInternal.h>
 #include "CFUtilities.h"
 

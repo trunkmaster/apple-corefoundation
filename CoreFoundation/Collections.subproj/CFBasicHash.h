@@ -9,7 +9,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFString.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 
 CF_EXTERN_C_BEGIN
 

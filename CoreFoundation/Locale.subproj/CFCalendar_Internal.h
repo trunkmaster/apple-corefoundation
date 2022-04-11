@@ -7,6 +7,8 @@
     See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 */
 
+#include <CoreFoundation/GSCFInternal.h>
+
 #if !defined(__COREFOUNDATION_CFCALENDAR_INTERNAL__)
 #define __COREFOUNDATION_CFCALENDAR_INTERNAL__ 1
 

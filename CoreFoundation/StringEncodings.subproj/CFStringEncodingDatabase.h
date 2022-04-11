@@ -11,6 +11,7 @@
  */
 
 #include <CoreFoundation/CFString.h>
+#include <CoreFoundation/GSCFInternal.h>
 
 CF_PRIVATE uint16_t __CFStringEncodingGetWindowsCodePage(CFStringEncoding encoding);
 CF_PRIVATE CFStringEncoding __CFStringEncodingGetFromWindowsCodePage(uint16_t codepage);

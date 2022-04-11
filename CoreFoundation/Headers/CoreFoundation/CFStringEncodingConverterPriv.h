@@ -11,7 +11,8 @@
 #define __COREFOUNDATION_CFSTRINGENCODINGCONVERTERPRIV__ 1
 
 #include <CoreFoundation/CFBase.h>
-#include "CFStringEncodingConverterExt.h"
+#include <CoreFoundation/GSCFInternal.h>
+#include <CoreFoundation/CFStringEncodingConverterExt.h>
 
 CF_PRIVATE  const CFStringEncodingConverter __CFConverterASCII;
 CF_PRIVATE  const CFStringEncodingConverter __CFConverterISOLatin1;

@@ -12,6 +12,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFUniChar.h>
+#include <CoreFoundation/GSCFInternal.h>
 
 #define kCFUniCharRecursiveDecompositionFlag	(1UL << 30)
 #define kCFUniCharNonBmpFlag			(1UL << 31)

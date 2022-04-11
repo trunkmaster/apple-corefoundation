@@ -14,7 +14,7 @@
 #include <CoreFoundation/CFBundle.h>
 #include <CoreFoundation/CFPlugIn.h>
 #include <CoreFoundation/CFError.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 #include "CFPlugIn_Factory.h"
 #include "CFBundle_BinaryTypes.h"
 #include <CoreFoundation/CFByteOrder.h>

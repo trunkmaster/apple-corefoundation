@@ -12,6 +12,9 @@
 
 #include <CoreFoundation/CFBase.h>
 
+// For size_t.
+#include <stddef.h>
+
 #if __has_include(<os/overflow.h>)
 #include <os/overflow.h>
 #else

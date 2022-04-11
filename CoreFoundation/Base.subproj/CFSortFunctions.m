@@ -20,7 +20,7 @@
 #endif // __HAS_DISPATCH__
 #include "CFLogUtilities.h"
 #include <CoreFoundation/GSCFInternal.h>
-#include "CFOverflow.h"
+#include <CoreFoundation/CFOverflow.h>
 
 #if __has_include(<checkint.h>)
 #include <checkint.h>

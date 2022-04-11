@@ -12,7 +12,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFRuntime.h>
-#include "CFRuntime_Internal.h"
+#include <CoreFoundation/CFRuntime_Internal.h>
 #include <CoreFoundation/GSCFInternal.h>
 #include <CoreFoundation/CFBasicHash.h>
 #include <string.h>

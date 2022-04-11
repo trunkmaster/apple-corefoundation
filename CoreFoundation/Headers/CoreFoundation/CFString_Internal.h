@@ -10,7 +10,7 @@
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFStringEncodingConverterExt.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 
 CF_ASSUME_NONNULL_BEGIN
 

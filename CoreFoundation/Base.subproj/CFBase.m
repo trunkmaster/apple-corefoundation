@@ -10,7 +10,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/GSCFInternal.h>
-#include "CFRuntime_Internal.h"
+#include <CoreFoundation/CFRuntime_Internal.h>
 #if __has_include(<unistd.h>)
 #include <unistd.h>
 #endif

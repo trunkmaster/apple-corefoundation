@@ -14,7 +14,7 @@
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/GSCFInternal.h>
-#include "CFPriv.h"
+#include <CoreFoundation/CFPriv.h>
 
 #include <shlobj.h>
 

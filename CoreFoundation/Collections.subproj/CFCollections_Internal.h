@@ -12,7 +12,7 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFDictionary.h>
-#include "CFInternal.h"
+#include <CoreFoundation/GSCFInternal.h>
 
 CF_EXTERN_C_BEGIN
 CF_ASSUME_NONNULL_BEGIN

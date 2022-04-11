@@ -11,6 +11,7 @@
 #define CFURLComponents_Internal_h
 
 #include <CoreFoundation/CFString.h>
+#include <CoreFoundation/GSCFInternal.h>
 
 // _URIParseInfo keeps track of what parts of a parsed uriReference are
 // present and the offset of where they start in the uriReference.
