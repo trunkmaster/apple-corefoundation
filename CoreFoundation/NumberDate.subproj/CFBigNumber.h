@@ -13,6 +13,8 @@
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFNumber.h>
 
+// size_t
+#include <stddef.h>
 
 // Base 1 billion number: each digit represents 0 to 999999999
 typedef struct {

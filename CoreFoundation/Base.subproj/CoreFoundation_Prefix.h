@@ -249,7 +249,7 @@ CF_INLINE int flsl( long mask ) {
 #if TARGET_OS_LINUX
     
 #define CF_PRIVATE extern __attribute__((visibility("hidden")))
-#define __weak
+// #define __weak // Causes warning -- why is this even here? Must be to compile w/o Obj-C runtime...
 
 #define strtoll_l(a,b,c,locale) strtoll(a,b,c)
 #define strncasecmp_l(a, b, c, d) strncasecmp(a, b, c)

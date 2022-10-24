@@ -614,10 +614,10 @@ CF_INLINE struct timespec _CFFileTimeSpecFromAbsoluteTime(CFAbsoluteTime at) {
 }
 
 // The 'filtered' function below is preferred to this older one
-CF_EXPORT bool _CFPropertyListCreateSingleValue(CFAllocatorRef allocator, CFDataRef data, CFOptionFlags option, CFStringRef keyPath, CFPropertyListRef *value, CFErrorRef *error);
+CF_EXPORT Boolean _CFPropertyListCreateSingleValue(CFAllocatorRef allocator, CFDataRef data, CFOptionFlags option, CFStringRef keyPath, CFPropertyListRef *value, CFErrorRef *error);
 
 // Returns a subset of the property list, only including the keyPaths in the CFSet. If the top level object is not a dictionary, you will get back an empty dictionary as the result.
-CF_EXPORT bool _CFPropertyListCreateFiltered(CFAllocatorRef allocator, CFDataRef data, CFOptionFlags option, CFSetRef keyPaths, CFPropertyListRef *value, CFErrorRef *error) API_AVAILABLE(macos(10.8), ios(6.0), watchos(2.0), tvos(9.0));
+CF_EXPORT Boolean _CFPropertyListCreateFiltered(CFAllocatorRef allocator, CFDataRef data, CFOptionFlags option, CFSetRef keyPaths, CFPropertyListRef *value, CFErrorRef *error) API_AVAILABLE(macos(10.8), ios(6.0), watchos(2.0), tvos(9.0));
 
 // Returns a set of the keys of the top-level dictionary of a plist. Optimized for bplist (though it works with XML too).  Only supports string keys. 
 CF_EXPORT CFSetRef _CFPropertyListCopyTopLevelKeys(CFAllocatorRef allocator, CFDataRef data, CFOptionFlags option, CFErrorRef *outError) API_AVAILABLE(macos(10.13), ios(11.0), watchos(4.0), tvos(11.0));

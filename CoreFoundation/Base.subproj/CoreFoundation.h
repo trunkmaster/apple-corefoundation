@@ -1,15 +1,24 @@
-/*	CoreFoundation.h
-	Copyright (c) 1998-2019, Apple Inc. and the Swift project authors
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2015 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See http://swift.org/LICENSE.txt for license information
+// See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+
+/*
+    This version of CoreFoundation.h is for the "Swift Runtime" mode of CF only.
  
-	Portions Copyright (c) 2014-2019, Apple Inc. and the Swift project authors
-	Licensed under Apache License v2.0 with Runtime Library Exception
-	See http://swift.org/LICENSE.txt for license information
-	See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+    Note: The contents of this file are only meant for compiling the Swift Foundation module. The library is not ABI or API stable and is not meant to be used as a general-purpose C library on Linux.
+ 
 */
 
 #if !defined(__COREFOUNDATION_COREFOUNDATION__)
 #define __COREFOUNDATION_COREFOUNDATION__ 1
 #define __COREFOUNDATION__ 1
+
+#define DEPLOYMENT_RUNTIME_SWIFT 1
 
 #if !defined(CF_EXCLUDE_CSTD_HEADERS)
 
@@ -29,6 +38,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#if __has_include(<netdb.h>)
+#include <netdb.h> // for Host.swift
+#endif
+
+#if __has_include(<ifaddrs.h>)
+#include <ifaddrs.h> // for Host.swift
+#endif
 
 #if defined(__STDC_VERSION__) && (199901L <= __STDC_VERSION__)
 
@@ -69,7 +86,6 @@
 #include <CoreFoundation/CFUtilities.h>
 #include <CoreFoundation/CFBundle.h>
 
-#if TARGET_OS_OSX || TARGET_OS_IPHONE || TARGET_OS_WIN32
 #include <CoreFoundation/CFMessagePort.h>
 #include <CoreFoundation/CFPlugIn.h>
 #include <CoreFoundation/CFRunLoop.h>
@@ -80,17 +96,7 @@
 #include <CoreFoundation/CFAttributedString.h>
 #include <CoreFoundation/CFNotificationCenter.h>
 
-#endif
-
-#if TARGET_OS_OSX || TARGET_OS_IPHONE
-#endif
-
-#include <CoreFoundation/CFUserNotification.h>
-
-#if !DEPLOYMENT_RUNTIME_SWIFT
-#include <CoreFoundation/CFXMLNode.h>
-#include <CoreFoundation/CFXMLParser.h>
-#endif
+#include <CoreFoundation/ForSwiftFoundationOnly.h>
 
 #endif /* ! __COREFOUNDATION_COREFOUNDATION__ */
 
