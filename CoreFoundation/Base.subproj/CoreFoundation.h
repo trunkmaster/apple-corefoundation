@@ -96,7 +96,9 @@
 #include <CoreFoundation/CFAttributedString.h>
 #include <CoreFoundation/CFNotificationCenter.h>
 
+#if CF_BUILDING_CF
 #include <CoreFoundation/ForSwiftFoundationOnly.h>
+#endif
 
 #endif /* ! __COREFOUNDATION_COREFOUNDATION__ */
 

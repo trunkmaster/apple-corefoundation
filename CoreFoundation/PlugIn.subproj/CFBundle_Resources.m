@@ -28,9 +28,11 @@
 
 #if TARGET_OS_MAC || TARGET_OS_LINUX || TARGET_OS_BSD
 #include <unistd.h>
-#if !TARGET_OS_ANDROID
-#include <sys/sysctl.h>
-#endif
+// #if !TARGET_OS_ANDROID
+// Deprecated since Linux 5.5, removed in glibc 2.32
+// https://sourceware.org/pipermail/libc-announce/2020/000029.html
+// #include <sys/sysctl.h>
+// #endif
 #include <sys/stat.h>
 #include <dirent.h>
 #endif
