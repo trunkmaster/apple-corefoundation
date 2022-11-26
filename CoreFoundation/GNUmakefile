@@ -44,6 +44,7 @@ libCoreFoundation_OBJC_FILES += \
 	RunLoop.subproj/CFRunLoop.m RunLoop.subproj/CFSocket.m \
 	\
 	Stream.subproj/CFConcreteStreams.m Stream.subproj/CFSocketStream.m Stream.subproj/CFStream.m \
+	Stream.subproj/CFFileDescriptor.m \
 	\
 	StringEncodings.subproj/CFBuiltinConverters.m StringEncodings.subproj/CFICUConverters.m \
 	StringEncodings.subproj/CFPlatformConverters.m \
@@ -68,8 +69,8 @@ libCoreFoundation_HEADER_FILES = CFArray.h CFAsmMacros.h CFAttributedString.h \
 	CFByteOrder.h CFCalendar.h CFCalendar_Internal.h CFCharacterSet.h CFCharacterSetPriv.h \
 	CFCollections_Internal.h CFData.h CFDateComponents.h CFDateFormatter.h \
 	CFDateFormatter_Private.h CFDate.h CFDateIntervalFormatter.h CFDateInterval.h \
-	CFDictionary.h CFError.h CFError_Private.h CFICUConverters.h CFICULogging.h \
-	CFInternal.h CFKnownLocations.h CFLocale.h CFLocaleInternal.h CFLocale_Private.h \
+	CFDictionary.h CFError.h CFError_Private.h CFFileDescriptor.h CFICUConverters.h \
+	CFICULogging.h CFInternal.h CFKnownLocations.h CFLocale.h CFLocaleInternal.h CFLocale_Private.h \
 	CFLocking.h CFLogUtilities.h CFMachPort.h CFMachPort_Internal.h CFMachPort_Lifetime.h \
 	CFMessagePort.h CFNotificationCenter.h CFNumberFormatter.h CFNumber.h CFNumber_Private.h \
 	CFOverflow.h CFPlugInCOM.h CFPlugIn_Factory.h CFPlugIn.h CFPreferences.h CFPriv.h \

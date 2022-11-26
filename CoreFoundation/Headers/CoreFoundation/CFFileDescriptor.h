@@ -1,0 +1,1 @@
+/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Stream.subproj/CFFileDescriptor.h
