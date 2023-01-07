@@ -14,6 +14,13 @@
 #include <CoreFoundation/CFDictionary.h>
 #include <stddef.h>
 
+#if __cplusplus
+#include <atomic>
+// template<class T>
+// using std_atomic = std::atomic<T>; // exposition only
+#define _Atomic(T) std::atomic<T>
+#endif
+
 CF_EXTERN_C_BEGIN
 
 #if (TARGET_OS_MAC && !TARGET_OS_IPHONE && !__x86_64h__)

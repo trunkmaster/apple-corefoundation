@@ -19,6 +19,7 @@
 #define __COREFOUNDATION__ 1
 
 #define DEPLOYMENT_RUNTIME_SWIFT 0
+#define DEPLOYMENT_RUNTIME_OBJC 0
 
 #if !defined(CF_EXCLUDE_CSTD_HEADERS)
 
@@ -92,6 +93,8 @@
 #include <CoreFoundation/CFStream.h>
 #include <CoreFoundation/CFSocket.h>
 #include <CoreFoundation/CFMachPort.h>
+
+#include <CoreFoundation/CFFileDescriptor.h>
 
 #include <CoreFoundation/CFAttributedString.h>
 #include <CoreFoundation/CFNotificationCenter.h>
