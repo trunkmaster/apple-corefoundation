@@ -10,6 +10,9 @@
 #if !defined(__COREFOUNDATION_CFRUNTIME__)
 #define __COREFOUNDATION_CFRUNTIME__ 1
 
+#if __OBJC__
+#import <Foundation/NSObject.h>
+#endif
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFDictionary.h>
 #include <stddef.h>
@@ -209,6 +212,30 @@ typedef struct __attribute__((__aligned__(8))) __CFRuntimeBase {
 
 #else
 
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+
+#if __OBJC__
+@interface CFType: NSObject {
+#if TARGET_RT_64_BIT
+    _Atomic(uint64_t) _cfinfoa;
+#else
+    _Atomic(uint32_t) _cfinfoa;
+#endif
+}
+@end
+#endif
+
+typedef struct __CFRuntimeBase {
+    Class _cfisa;
+#if TARGET_RT_64_BIT
+    _Atomic(uint64_t) _cfinfoa;
+#else
+    _Atomic(uint32_t) _cfinfoa;
+#endif
+} CFRuntimeBase;
+
+#else
+
 typedef struct __CFRuntimeBase {
     uintptr_t _cfisa;
 #if TARGET_RT_64_BIT
@@ -218,13 +245,17 @@ typedef struct __CFRuntimeBase {
 #endif
 } CFRuntimeBase;
 
+#endif
+
+
+
 #if TARGET_RT_64_BIT
 #define INIT_CFRUNTIME_BASE(...) {0, 0x0000000000000080ULL}
 #else
 #define INIT_CFRUNTIME_BASE(...) {0, 0x00000080UL}
 #endif
 
-#endif
+#endif // DEPLOYMENT_RUNTIME_SWIFT
 
 CF_EXPORT CFTypeRef _CFRuntimeCreateInstance(CFAllocatorRef allocator, CFTypeID typeID, CFIndex extraBytes, unsigned char *category);
 	/* Creates a new CF instance of the class specified by the

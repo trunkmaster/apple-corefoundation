@@ -15,6 +15,7 @@
 
 #define DEPLOYMENT_RUNTIME_SWIFT 0
 #define DEPLOYMENT_RUNTIME_OBJC 0
+#define DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2 1
 
 #if (defined(__CYGWIN32__) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__ 1
