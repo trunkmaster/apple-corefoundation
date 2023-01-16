@@ -10,6 +10,7 @@
 
 // Note the header file is in the OpenSource set (stripped to almost nothing), but not the .c file
 
+#define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 #include <CoreFoundation/CFLocale.h>
 #include <CoreFoundation/CFLocale_Private.h>
 #include <CoreFoundation/CFString.h>
@@ -23,6 +24,9 @@
 #include <CoreFoundation/CFBundle_Internal.h>
 #include <CoreFoundation/CFLocaleInternal.h>
 #include <stdatomic.h>
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+#import <CoreFoundation/NSCFLocale.h>
+#endif
 #if TARGET_OS_MAC || TARGET_OS_WIN32 || TARGET_OS_LINUX || TARGET_OS_BSD
 #include <unicode/uloc.h>           // ICU locales
 #include <unicode/ulocdata.h>       // ICU locale data

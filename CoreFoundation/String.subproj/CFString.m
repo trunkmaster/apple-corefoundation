@@ -10,6 +10,7 @@
 !!! For performance reasons, it's important that all functions marked CF_INLINE in this file are inlined.
 */
 
+#define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFDictionary.h>
@@ -28,6 +29,9 @@
 #include <CoreFoundation/CFRuntime_Internal.h>
 #include <assert.h>
 #include <unicode/uchar.h>
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+#import <CoreFoundation/NSCFString.h>
+#endif
 #if TARGET_OS_MAC || TARGET_OS_WIN32 || TARGET_OS_LINUX
 #include <CoreFoundation/CFLocaleInternal.h>
 #include "CFStringLocalizedFormattingInternal.h"
@@ -4946,8 +4950,12 @@ void __CFStringAppendBytes(CFMutableStringRef str, const char *cStr, CFIndex app
 
     if (CF_IS_OBJC(_kCFRuntimeIDCFString, str)) {
 	if (!appendedIsUnicode && !demoteAppendedUnicode) {
+        #if DEPLOYMENT_RUNTIME_OBJC
 	    CF_OBJC_FUNCDISPATCHV(_kCFRuntimeIDCFString, void, (NSMutableString *)str, _cfAppendCString:(const unsigned char *)cStr length:(NSInteger)appendedLength);
-	} else {
+        #else
+        CF_OBJC_FUNCDISPATCHV(_kCFRuntimeIDCFString, void, (NSMutableString *)str, _cfAppendCString:(const char *)cStr length:(NSInteger)appendedLength);
+        #endif
+    } else {
 	    CF_OBJC_FUNCDISPATCHV(_kCFRuntimeIDCFString, void, (NSMutableString *)str, appendCharacters:(const unichar *)cStr length:(NSUInteger)appendedLength);
 	}
     }
@@ -6340,7 +6348,7 @@ static Boolean __CFStringFormatLocalizedNumber(CFMutableStringRef output, CFLoca
 }
 #endif
     
-#if !DEPLOYMENT_RUNTIME_OBJC
+#if !DEPLOYMENT_RUNTIME_OBJC && !DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
 // Open-source Core Foundation cannot rely on Foundation headers being present, so we redefine this here.
 // This must match the code that is vended by FoundationErrors.h and swift-corelibs-foundation.
 static const CFIndex NSFormattingError = 2048;

@@ -24,6 +24,8 @@ libCoreFoundation_OBJC_FILES += \
 	Locale.subproj/CFLocaleIdentifier.m Locale.subproj/CFLocaleKeys.m \
 	Locale.subproj/CFLocale.m Locale.subproj/CFNumberFormatter.m \
 	\
+	Locale.subproj/NSCFLocale.m \
+	\
 	NumberDate.subproj/CFBigNumber.m NumberDate.subproj/CFDate.m \
 	NumberDate.subproj/CFNumber.m NumberDate.subproj/CFTimeZone.m \
 	\
@@ -57,6 +59,8 @@ libCoreFoundation_OBJC_FILES += \
 	String.subproj/CFString.m String.subproj/CFStringScanner.m String.subproj/CFStringTransform.m \
 	String.subproj/CFStringUtilities.m \
 	\
+	String.subproj/NSCFString.m \
+	\
 	URL.subproj/CFURLAccess.m URL.subproj/CFURLComponents.m URL.subproj/CFURLComponents_URIParser.m \
 	URL.subproj/CFURL.m URL.subproj/CFURLSessionInterface.m
 
@@ -83,7 +87,10 @@ libCoreFoundation_HEADER_FILES = CFArray.h CFAsmMacros.h CFAttributedString.h \
 	CFUnicodeDecomposition.h CFUnicodePrecomposition.h CFURLAccess.h CFURLComponents.h \
 	CFURLComponents_Internal.h CFURL.h CFURL.inc.h CFURLPriv.h CFURLSessionInterface.h \
 	CFUserNotification.h CFUtilities.h CFUUID.h CFXMLInterface.h CoreFoundation.h \
-	CoreFoundation_Prefix.h ForFoundationOnly.h ForSwiftFoundationOnly.h GSCFInternal.h TargetConditionals.h
+	CoreFoundation_Prefix.h ForFoundationOnly.h ForSwiftFoundationOnly.h GSCFInternal.h \
+	TargetConditionals.h BridgeHelpers.h \
+	\
+	NSCFLocale.h NSCFString.h
 
 libCoreFoundation_INCLUDE_DIRS += -I./Headers
 libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function -DBINARY_SUPPORT_DLFCN
@@ -95,5 +102,13 @@ libCoreFoundation_LIBRARIES_DEPEND_UPON += -ldispatch
 # Set up libxml2
 libCoreFoundation_INCLUDE_DIRS += -I/usr/include/libxml2
 libCoreFoundation_LIBRARIES_DEPEND_UPON += -lxml2
+
+# Set up libicu
+libCoreFoundation_LIBRARIES_DEPEND_UPON += $(shell pkg-config --libs-only-l icu-uc icu-io)
+libCoreFoundation_LIB_DIRS += $(shell pkg-config --libs-only-L icu-uc icu-io)
+libCoreFoundation_LDFLAGS += $(shell pkg-config --libs-only-other icu-uc icu-io)
+libCoreFoundation_INCLUDE_DIRS += $(shell pkg-config --cflags-only-I icu-uc icu-io)
+libCoreFoundation_OBJCFLAGS += $(shell pkg-config --cflags-only-other icu-uc icu-io)
+
 
 include $(GNUSTEP_MAKEFILES)/library.make

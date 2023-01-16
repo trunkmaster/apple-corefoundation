@@ -153,6 +153,7 @@ CFStringRef CFStringConvertEncodingToIANACharSetName(CFStringEncoding encoding) 
     return name;
 }
 
+#if !DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
 enum {
     NSASCIIStringEncoding = 1,		/* 0..127 only */
     NSNEXTSTEPStringEncoding = 2,
@@ -174,6 +175,7 @@ enum {
 
     NSProprietaryStringEncoding = 65536    /* Installation-specific encoding */
 };
+#endif
 
 #define NSENCODING_MASK (1 << 31)
 
@@ -205,6 +207,27 @@ unsigned long CFStringConvertEncodingToNSStringEncoding(CFStringEncoding theEnco
         case kCFStringEncodingISOLatin2: return NSISOLatin2StringEncoding;
         case kCFStringEncodingISO_2022_JP: return NSISO2022JPStringEncoding;
         case kCFStringEncodingNextStepLatin: return NSNEXTSTEPStringEncoding;
+
+        #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+        case kCFStringEncodingISOLatin3: return NSISOLatin3StringEncoding;
+        case kCFStringEncodingISOLatin4: return NSISOLatin4StringEncoding;
+        case kCFStringEncodingISOLatin5: return NSISOLatin5StringEncoding;
+        case kCFStringEncodingISOLatin6: return NSISOLatin6StringEncoding;
+        case kCFStringEncodingISOLatin7: return NSISOLatin7StringEncoding;
+        case kCFStringEncodingISOLatin8: return NSISOLatin8StringEncoding;
+        case kCFStringEncodingISOLatin9: return NSISOLatin9StringEncoding;
+        case kCFStringEncodingISOLatinCyrillic: return NSISOCyrillicStringEncoding;
+        case kCFStringEncodingISOLatinArabic: return NSISOArabicStringEncoding;
+        case kCFStringEncodingISOLatinGreek: return NSISOGreekStringEncoding;
+        case kCFStringEncodingISOLatinThai: return NSISOThaiStringEncoding;
+
+        case kCFStringEncodingKOI8_R: return NSKOI8RStringEncoding;
+        case kCFStringEncodingGB_2312_80: return NSGB2312StringEncoding;
+        case kCFStringEncodingEUC_CN : return NSGB2312StringEncoding;
+        case kCFStringEncodingUTF7: return NSUTF7StringEncoding;
+        case kCFStringEncodingBig5: return NSBIG5StringEncoding;
+        case kCFStringEncodingEUC_KR: return NSKoreanEUCStringEncoding;
+        #endif
     }
 
     return NSENCODING_MASK | theEncoding;
@@ -212,31 +235,66 @@ unsigned long CFStringConvertEncodingToNSStringEncoding(CFStringEncoding theEnco
 
 CFStringEncoding CFStringConvertNSStringEncodingToEncoding(unsigned long theEncoding) {
     const uint16_t encodings[] = {
-        kCFStringEncodingASCII,
+        kCFStringEncodingASCII, // 1 (index 0)
         kCFStringEncodingNextStepLatin,
         kCFStringEncodingEUC_JP,
         0,
-        kCFStringEncodingISOLatin1,
+        kCFStringEncodingISOLatin1, //5
         kCFStringEncodingMacSymbol,
         kCFStringEncodingNonLossyASCII,
         kCFStringEncodingDOSJapanese,
         kCFStringEncodingISOLatin2,
-        kCFStringEncodingUTF16,
+        kCFStringEncodingUTF16, // 10
         kCFStringEncodingWindowsCyrillic,
         kCFStringEncodingWindowsLatin1,
         kCFStringEncodingWindowsGreek,
         kCFStringEncodingWindowsLatin5,
-        kCFStringEncodingWindowsLatin2
+        kCFStringEncodingWindowsLatin2 // 15
+        #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+        ,
+        // Skip to 50
+        kCFStringEncodingKOI8_R, // 50 (index 15)
+        kCFStringEncodingISOLatin3,
+        kCFStringEncodingISOLatin4,
+        kCFStringEncodingISOLatinArabic,
+        kCFStringEncodingISOLatinGreek,
+        kCFStringEncodingISOLatinHebrew, // 55
+        kCFStringEncodingGB_2312_80,
+        kCFStringEncodingISOLatin5,
+        kCFStringEncodingISOLatin5,
+        kCFStringEncodingISOLatin6,
+        kCFStringEncodingISOLatinThai,
+        // 60 - ISO-8859-12; Devanagiri (abandoned)
+        kCFStringEncodingISOLatin7,
+        kCFStringEncodingISOLatin8,
+        kCFStringEncodingISOLatin9,
+        // 0, // kCFStringEncodingUTF7 - Larger than max of UInt16
+        // 0, // GSM 0338 - No CF equivalent // 65
+        // kCFStringEncodingBig5,
+        // kCFStringEncodingEUC_KR
+        #endif
     };
 
     if (NSUTF8StringEncoding == theEncoding) return kCFStringEncodingUTF8;
 
-    if ((theEncoding > 0) && (theEncoding <= NSWindowsCP1250StringEncoding)) return encodings[theEncoding - 1];
+    if ((theEncoding > 0) && (theEncoding <= NSWindowsCP1250StringEncoding))
+        return encodings[theEncoding - 1];
 
+    #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+    if ((theEncoding >= NSKOI8RStringEncoding) && (theEncoding <= NSISOLatin9StringEncoding))
+        return encodings[theEncoding - 15];
+    #endif
     switch (theEncoding) {
         case NSMacOSRomanStringEncoding: return kCFStringEncodingMacRoman;
         case NSISO2022JPStringEncoding: return kCFStringEncodingISO_2022_JP;
-
+        #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+        case NSISOCyrillicStringEncoding: return kCFStringEncodingISOLatinCyrillic;
+        // case NSProprietaryStringEncoding: return kCFStringEncodingInvalidId;
+        case NSUTF7StringEncoding: return kCFStringEncodingUTF7;
+        // case NSGSM0338StringEncoding: return kCFStringEncodingInvalidId;
+        case NSBIG5StringEncoding: return kCFStringEncodingBig5;
+        case NSKoreanEUCStringEncoding: return kCFStringEncodingEUC_KR;
+        #endif
         default:
             return ((theEncoding & NSENCODING_MASK) ? theEncoding & ~NSENCODING_MASK : kCFStringEncodingInvalidId);
     }
