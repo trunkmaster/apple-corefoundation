@@ -265,25 +265,32 @@ bool (*__CFObjCIsCollectable)(void *) = NULL;
 #endif
 
 #if DEPLOYMENT_RUNTIME_SWIFT
-// The constant string class reference is set at link time to _NSCFConstantString
-void *__CFConstantStringClassReferencePtr = &_CF_CONSTANT_STRING_SWIFT_CLASS;
+    // The constant string class reference is set at link time to _NSCFConstantString
+    void *__CFConstantStringClassReferencePtr = &_CF_CONSTANT_STRING_SWIFT_CLASS;
+#elif DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+    extern void *__CFConstantStringClassReferencePtr;
+    #if TARGET_RT_64_BIT
+        extern int __CFConstantStringClassReference[24];
+    #else
+        extern int __CFConstantStringClassReference[12];
+    #endif
 #else
-#if !__CONSTANT_CFSTRINGS__
-// Compiler uses this symbol name; must match compiler built-in decl, so we use 'int'
-#if TARGET_RT_64_BIT
-int __CFConstantStringClassReference[24] = {0};
-#else
-int __CFConstantStringClassReference[12] = {0};
-#endif
-#endif
+    // #if !__CONSTANT_CFSTRINGS__
+    // // Compiler uses this symbol name; must match compiler built-in decl, so we use 'int'
+    //     #if TARGET_RT_64_BIT
+    //         int __CFConstantStringClassReference[24] = {0};
+    //     #else
+    //         int __CFConstantStringClassReference[12] = {0};
+    //     #endif
+    // #endif
 
-#if TARGET_RT_64_BIT
-int __CFConstantStringClassReference[24] = {0};
-#else
-int __CFConstantStringClassReference[12] = {0};
-#endif
+    #if TARGET_RT_64_BIT
+        int __CFConstantStringClassReference[24] = {0};
+    #else
+        int __CFConstantStringClassReference[12] = {0};
+    #endif
 
-void *__CFConstantStringClassReferencePtr = NULL;
+    void *__CFConstantStringClassReferencePtr = NULL;
 #endif
 
 Boolean _CFIsObjC(CFTypeID typeID, void *obj) {

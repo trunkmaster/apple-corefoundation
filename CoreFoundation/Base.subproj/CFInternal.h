@@ -11,6 +11,7 @@
         NOT TO BE USED OUTSIDE CF!
 */
 
+#include "CoreFoundation/CFBase.h"
 #if !CF_BUILDING_CF
     #error The header file CFInternal.h is for the exclusive use of CoreFoundation. No other project should include it.
 #endif
@@ -822,10 +823,40 @@ CF_INLINE uintptr_t __CFISAForTypeID(CFTypeID typeID) {
     return (typeID < __CFRuntimeClassTableSize) ? __CFRuntimeObjCClassTable[typeID] : 0;
 }
 
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2 && CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE
+/// Returns `(ret)[obj __VA_ARGS__]` from the calling function when ``obj``
+/// is not a CF type whose ID is ``typeID``.
+#define CF_OBJC_FUNCDISPATCHV(typeID, ret, obj, ...) do { \
+    if ( CF_IS_OBJC(typeID, obj) ) { \
+        return (ret)[obj __VA_ARGS__]; \
+    } \
+} while (0)
+
+/// Returns `(ret)[[obj __VA_ARGS__] retain]` from the calling function when ``obj``
+/// is not a CF type whose ID is ``typeID``.
+#define CF_OBJC_RETAINED_FUNCDISPATCHV(typeID, ret, obj, ...) do { \
+    if ( CF_IS_OBJC(typeID, obj) ) { \
+        return (ret)[[obj __VA_ARGS__] retain]; \
+    } \
+} while (0)
+
+#define CF_OBJC_CALLV(obj, ...) [(id)(obj) __VA_ARGS__]
+/// Returns FALSE if the type of ``obj`` is the class whose ID is ``typeID``
+CF_INLINE Boolean __CF_IS_OBJC(int typeID, id obj) {
+    // If the object is nil, return TRUE so it goes through the Objective-C runtime
+    // and the method call returns falsy.
+    if(obj == nil) {
+        return TRUE;
+    }
+    return ![[obj class] isSubclassOfClass: (Class)__CFISAForTypeID(typeID)];
+}
+#define CF_IS_OBJC(typeID, obj) __CF_IS_OBJC((int)typeID, (id)(void*)obj)
+#else
 #define CF_OBJC_FUNCDISPATCHV(typeID, obj, ...) do { } while (0)
 #define CF_OBJC_RETAINED_FUNCDISPATCHV(typeID, obj, ...) do { } while (0)
 #define CF_OBJC_CALLV(obj, ...) (0)
 #define CF_IS_OBJC(typeID, obj) (0)
+#endif
 
 /* See comments in CFBase.c
 */
