@@ -611,6 +611,10 @@ CF_PRIVATE void _CFRuntimeSetInstanceTypeIDAndIsa(CFTypeRef cf, CFTypeID newType
     if (((CFRuntimeBase *)cf)->_cfisa != __CFISAForTypeID(newTypeID)) {
         ((CFSwiftRef)cf)->isa = (uintptr_t)__CFISAForTypeID(newTypeID);
     }
+#elif DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+    if (((CFRuntimeBase*)cf)->_cfisa != __CFISAForTypeID(newTypeID)) {
+        ((CFRuntimeBase*)cf)->_cfisa = (Class)__CFISAForTypeID(newTypeID);
+    }
 #endif
 }
 

@@ -819,9 +819,16 @@ CF_PRIVATE CFRuntimeClass const * __CFRuntimeClassTable[__CFRuntimeClassTableSiz
 
 #define __CFRuntimeObjCClassTable (((uintptr_t *)__CFRuntimeClassTable) + __CFRuntimeClassTableSize)
 
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+// We cannot assume Class is equivalent to uintptr_t
+CF_INLINE Class __CFISAForTypeID(CFTypeID typeID) {
+    return (Class)((typeID < __CFRuntimeClassTableSize) ? __CFRuntimeObjCClassTable[typeID] : 0);
+}
+#else
 CF_INLINE uintptr_t __CFISAForTypeID(CFTypeID typeID) {
     return (typeID < __CFRuntimeClassTableSize) ? __CFRuntimeObjCClassTable[typeID] : 0;
 }
+#endif
 
 #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2 && CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE
 /// Returns `(ret)[obj __VA_ARGS__]` from the calling function when ``obj``
