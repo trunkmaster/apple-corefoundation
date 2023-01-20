@@ -16,6 +16,8 @@ libCoreFoundation_OBJC_FILES += \
 	Collections.subproj/CFDictionary.m Collections.subproj/CFSet.m \
 	Collections.subproj/CFStorage.m Collections.subproj/CFTree.m \
 	\
+	Collections.subproj/NSCFCollectionSupport.m \
+	\
 	Error.subproj/CFError.m \
 	\
 	Locale.subproj/CFCalendar_Enumerate.m Locale.subproj/CFCalendar.m \
