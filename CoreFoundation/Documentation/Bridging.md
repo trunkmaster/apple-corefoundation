@@ -94,16 +94,16 @@ BRIDGED_CLASS_FOR_CODER(NSCFSomething)
 * [ ] `CFCharacterSet`
 * [ ] `CFData`
 * [ ] `CFDate`
-* [ ] `CFDictionary`
+* [X] `CFDictionary`
 * [ ] `CFError`
 * [X] `CFLocale`
 * [ ] `CFMutableArray`
 * [ ] `CFMutableAttributedString`
 * [ ] `CFMutableCharacterSet`
 * [ ] `CFMutableData`
-* [ ] `CFMutableDictionary`
+* [X] `CFMutableDictionary`
 * [ ] `CFMutableSet`
-* [ ] `CFMutableString`
+* [X] `CFMutableString`
 * [ ] `CFNull`
 * [ ] `CFNumber`
 * [ ] `CFReadStream`

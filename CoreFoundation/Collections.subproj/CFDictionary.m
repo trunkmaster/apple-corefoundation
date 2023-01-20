@@ -8,6 +8,7 @@
  Responsibility: Michael LeHew
  */
 
+#define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 #include <CoreFoundation/CFDictionary.h>
 #include <CoreFoundation/GSCFInternal.h>
 #include <CoreFoundation/CFBasicHash.h>
@@ -15,6 +16,9 @@
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFRuntime_Internal.h>
 
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+#import "NSCFDictionary.h"
+#endif
 
 const CFDictionaryKeyCallBacks kCFTypeDictionaryKeyCallBacks = {0, __CFTypeCollectionRetain, __CFTypeCollectionRelease, CFCopyDescription, CFEqual, CFHash};
 const CFDictionaryKeyCallBacks kCFCopyStringDictionaryKeyCallBacks = {0, __CFStringCollectionCopy, __CFTypeCollectionRelease, CFCopyDescription, CFEqual, CFHash};
@@ -181,9 +185,12 @@ CFMutableDictionaryRef CFDictionaryCreateMutableCopy(CFAllocatorRef allocator, C
     CFAssert2(0 <= capacity, __kCFLogAssertion, "%s(): capacity (%ld) cannot be less than zero", __PRETTY_FUNCTION__, capacity);
     CFBasicHashRef ht = NULL;
     Boolean const isObjC = CF_IS_OBJC(typeID, other);
+    // There is no _cfMutableCopy on GNUstep.
+    #if DEPLOYMENT_RUNTIME_OBJC
     if (isObjC && _CFAllocatorIsSystemDefault(allocator)) {
         return (CFMutableDictionaryRef)CF_OBJC_CALLV((id)other, _cfMutableCopy);
     }
+    #endif
     if (isObjC || CF_IS_SWIFT(typeID, other)) {
         CFIndex numValues = CFDictionaryGetCount(other);
         void const *vbuffer[256], *kbuffer[256];

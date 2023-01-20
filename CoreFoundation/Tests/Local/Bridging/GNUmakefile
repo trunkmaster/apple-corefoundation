@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = CFBridgingTests
-CFBridgingTests_OBJC_FILES = NSCFLocale-Tests.m NSCFString-Tests.m
+CFBridgingTests_OBJC_FILES = NSCFLocale-Tests.m NSCFString-Tests.m NSCFDictionary-Tests.m
 CFBridgingTests_OBJC_LIBS = -lCoreFoundation
 CFBridgingTests_LIB_DIRS = -L../../../obj
 CFBridgingTests_INCLUDE_DIRS = -I../../../Headers
