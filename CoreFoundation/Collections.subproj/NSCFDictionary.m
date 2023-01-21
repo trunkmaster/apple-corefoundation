@@ -2,8 +2,6 @@
 // SPDX-FileCopyrightText: 2023 Ethan Charoenpitaks
 //                         2018 Microsoft Corporation
 
-#include "Foundation/NSEnumerator.h"
-#include "Foundation/NSObjCRuntime.h"
 #define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 
 #import <CoreFoundation/GSCFInternal.h>
