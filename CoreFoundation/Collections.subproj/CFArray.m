@@ -8,6 +8,7 @@
 	Responsibility: Michael LeHew
 */
 
+#define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFPriv.h>
 #include <CoreFoundation/GSCFInternal.h>
@@ -508,7 +509,7 @@ Boolean CFArrayContainsValue(CFArrayRef array, CFRange range, const void *value)
 
 const void *CFArrayGetValueAtIndex(CFArrayRef array, CFIndex idx) {
     CF_SWIFT_FUNCDISPATCHV(CFArrayGetTypeID(), const void *, (CFSwiftRef)array, NSArray.objectAtIndex, idx);
-    
+    CF_OBJC_FUNCDISPATCHV(_kCFRuntimeIDCFArray, const void *, (NSArray *)array, objectAtIndex: idx);
     
 #if !CF_ARRAY_ALWAYS_BRIDGE
     __CFGenericValidateType(array, CFArrayGetTypeID());

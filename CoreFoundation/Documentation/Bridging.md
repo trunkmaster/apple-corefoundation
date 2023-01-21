@@ -87,7 +87,7 @@ BRIDGED_CLASS_FOR_CODER(NSCFSomething)
 
 ## Status
 
-* [ ] `CFArray`
+* [X] `CFArray`
 * [ ] `CFAttributedString`
 * [ ] `CFBoolean`
 * [ ] `CFCalendar`
@@ -97,7 +97,7 @@ BRIDGED_CLASS_FOR_CODER(NSCFSomething)
 * [X] `CFDictionary`
 * [ ] `CFError`
 * [X] `CFLocale`
-* [ ] `CFMutableArray`
+* [X] `CFMutableArray`
 * [ ] `CFMutableAttributedString`
 * [ ] `CFMutableCharacterSet`
 * [ ] `CFMutableData`
