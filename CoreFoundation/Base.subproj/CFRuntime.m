@@ -9,7 +9,7 @@
 */
 
 #define ENABLE_ZOMBIES 1
-
+#define CF_BRIDGING_IMPLEMENTED_FOR_THIS_FILE 1
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFRuntime.h>
 #include <CoreFoundation/CFRuntime_Internal.h>
@@ -42,6 +42,10 @@ OBJC_EXPORT void *objc_destructInstance(id obj);
 
 #if TARGET_OS_WIN32
 #include <Shellapi.h>
+#endif
+
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+#import "NSCFType.h"
 #endif
 
 enum {
@@ -714,11 +718,35 @@ CF_INLINE Boolean CFTYPE_IS_SWIFT(const void *obj) {
 
 #endif
 
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+
+// CF_INLINE 
+Boolean CFTYPE_IS_OBJC(const void *obj) {
+    // // If the object is nil, return TRUE so it goes through the Objective-C runtime
+    // // and the method call returns falsy.
+    // if(obj == nil) {
+    //     return TRUE;
+    // }
+    // // If the object is not nil, but the class is Nil, then it must be a CF type.
+    // if(((CFRuntimeBase*)obj)->_cfisa == Nil) {
+    //     return FALSE;
+    // }
+    return ![(id)obj isCF];
+}
+
+#define CFTYPE_OBJC_FUNCDISPATCH0(rettype, obj, fn) \
+    if (CFTYPE_IS_OBJC(obj)) return (rettype)[(id)obj fn];
+
+#define CFTYPE_OBJC_FUNCDISPATCH1(rettype, obj, fn, a1) \
+    if (CFTYPE_IS_OBJC(obj)) return (rettype)[(id)obj fn a1];
+
+#else
 
 #define CFTYPE_IS_OBJC(obj) (false)
 #define CFTYPE_OBJC_FUNCDISPATCH0(rettype, obj, sel) do {} while (0)
 #define CFTYPE_OBJC_FUNCDISPATCH1(rettype, obj, sel, a1) do {} while (0)
 
+#endif
 
 CFTypeID CFGetTypeID(CFTypeRef cf) {
 #if defined(DEBUG)
@@ -752,6 +780,7 @@ CFTypeRef _CFNonObjCRetain(CFTypeRef cf) {
 
 CFTypeRef CFRetain(CFTypeRef cf) {
     if (NULL == cf) { CRSetCrashLogMessage("*** CFRetain() called with NULL ***"); HALT; }
+    CFTYPE_OBJC_FUNCDISPATCH0(CFTypeRef, cf, retain);
     if (cf) __CFGenericAssertIsCF(cf);
     return _CFRetain(cf, false);
 }
@@ -770,6 +799,7 @@ void _CFNonObjCRelease(CFTypeRef cf) {
 
 void CFRelease(CFTypeRef cf) {
     if (NULL == cf) { CRSetCrashLogMessage("*** CFRelease() called with NULL ***"); HALT; }
+    CFTYPE_OBJC_FUNCDISPATCH0(void, cf, release);
     if (cf) __CFGenericAssertIsCF(cf);
     _CFRelease(cf);
 }
@@ -947,7 +977,7 @@ CFHashCode CFHash(CFTypeRef cf) {
 // definition: produces a normally non-NULL debugging description of the object
 CFStringRef CFCopyDescription(CFTypeRef cf) {
     if (NULL == cf) return NULL;
-    // CFTYPE_OBJC_FUNCDISPATCH0(CFStringRef, cf, _copyDescription);  // XXX returns 0 refcounted item under GC
+    CFTYPE_OBJC_FUNCDISPATCH0(CFStringRef, cf, _copyDescription);  // XXX returns 0 refcounted item under GC
     __CFGenericAssertIsCF(cf);
     if (NULL != __CFRuntimeClassTable[__CFGenericTypeID_inline(cf)]->copyDebugDesc) {
 	CFStringRef result = __CFRuntimeClassTable[__CFGenericTypeID_inline(cf)]->copyDebugDesc(cf);

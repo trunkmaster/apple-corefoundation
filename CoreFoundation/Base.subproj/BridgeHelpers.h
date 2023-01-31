@@ -72,6 +72,9 @@ _Pragma("clang diagnostic pop") \
 \
 -(CFTypeID)_cfTypeID {                                                             \
     return kCFTypeID;                                                         \
+} \
+- (BOOL) isCF { \
+    return YES; \
 }
 // We need to implement this somewhere else.
 // + (NSBridgedConcreteType*)allocWithZone:(NSZone*)zone { \

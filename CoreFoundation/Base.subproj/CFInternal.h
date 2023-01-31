@@ -12,6 +12,7 @@
 */
 
 #include "CoreFoundation/CFBase.h"
+#include "CoreFoundation/CFRuntime_Internal.h"
 #if !CF_BUILDING_CF
     #error The header file CFInternal.h is for the exclusive use of CoreFoundation. No other project should include it.
 #endif
@@ -822,7 +823,12 @@ CF_PRIVATE CFRuntimeClass const * __CFRuntimeClassTable[__CFRuntimeClassTableSiz
 #if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
 // We cannot assume Class is equivalent to uintptr_t
 CF_INLINE Class __CFISAForTypeID(CFTypeID typeID) {
-    return (Class)((typeID < __CFRuntimeClassTableSize) ? __CFRuntimeObjCClassTable[typeID] : 0);
+    return (Class)(
+        ((typeID < __CFRuntimeClassTableSize) ? __CFRuntimeObjCClassTable[typeID] : 0)
+        // All objects are NSCFTypes if they aren't anything else.
+        // _kCFRuntimeIDCFType == 1, but we have recursive includes and can't include CFRuntime_Internal.h
+        ?: __CFRuntimeObjCClassTable[1]
+    );
 }
 #else
 CF_INLINE uintptr_t __CFISAForTypeID(CFTypeID typeID) {
