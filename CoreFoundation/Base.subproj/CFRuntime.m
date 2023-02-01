@@ -785,6 +785,15 @@ CFTypeRef CFRetain(CFTypeRef cf) {
     return _CFRetain(cf, false);
 }
 
+CFTypeRef CFBridgingRetain(id obj) {
+    return CFRetain((CFTypeRef)obj);
+}
+
+id CFBridgingRelease(CFTypeRef cf) {
+    CFRelease(cf);
+    return (id)cf;
+}
+
 CFTypeRef CFAutorelease(CFTypeRef __attribute__((cf_consumed)) cf) {
     if (NULL == cf) { CRSetCrashLogMessage("*** CFAutorelease() called with NULL ***"); HALT; }
     return cf;

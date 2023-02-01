@@ -661,6 +661,12 @@ CFTypeRef CFRetain(CFTypeRef cf);
 CF_EXPORT
 void CFRelease(CFTypeRef cf);
 
+CF_EXPORT
+CFTypeRef CFBridgingRetain(id obj);
+
+CF_EXPORT
+id CFBridgingRelease(CFTypeRef cf);
+
 #if DEPLOYMENT_RUNTIME_SWIFT
 #else
 CF_EXPORT
