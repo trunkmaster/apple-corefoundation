@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Locale.subproj/NSCFLocale.h
+../../Locale.subproj/NSCFLocale.h

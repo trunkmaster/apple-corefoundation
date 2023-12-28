@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Stream.subproj/CFStreamPriv.h
+../../Stream.subproj/CFStreamPriv.h

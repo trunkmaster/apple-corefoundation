@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/NumberDate.subproj/CFNumber.h
+../../NumberDate.subproj/CFNumber.h

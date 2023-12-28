@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/RunLoop.subproj/CFSocket.h
+../../RunLoop.subproj/CFSocket.h

@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/URL.subproj/CFURLPriv.h
+../../URL.subproj/CFURLPriv.h

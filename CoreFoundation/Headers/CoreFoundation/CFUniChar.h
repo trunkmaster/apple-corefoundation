@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/StringEncodings.subproj/CFUniChar.h
+../../StringEncodings.subproj/CFUniChar.h

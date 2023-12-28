@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Collections.subproj/NSCFCollectionSupport.h
+../../Collections.subproj/NSCFCollectionSupport.h

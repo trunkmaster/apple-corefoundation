@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Base.subproj/GSCFInternal.h
+../../Base.subproj/GSCFInternal.h

@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/PlugIn.subproj/CFBundle_BinaryTypes.h
+../../PlugIn.subproj/CFBundle_BinaryTypes.h

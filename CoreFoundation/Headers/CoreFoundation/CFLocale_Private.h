@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Locale.subproj/CFLocale_Private.h
+../../Locale.subproj/CFLocale_Private.h

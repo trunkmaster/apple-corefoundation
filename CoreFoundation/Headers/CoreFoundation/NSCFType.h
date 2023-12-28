@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Base.subproj/NSCFType.h
+../../Base.subproj/NSCFType.h

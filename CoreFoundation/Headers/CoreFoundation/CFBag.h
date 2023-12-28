@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Collections.subproj/CFBag.h
+../../Collections.subproj/CFBag.h

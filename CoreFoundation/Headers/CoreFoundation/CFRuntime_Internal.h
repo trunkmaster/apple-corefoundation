@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Base.subproj/CFRuntime_Internal.h
+../../Base.subproj/CFRuntime_Internal.h

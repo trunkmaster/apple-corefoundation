@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/String.subproj/CFString.h
+../../String.subproj/CFString.h

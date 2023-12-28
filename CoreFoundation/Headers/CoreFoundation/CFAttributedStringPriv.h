@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/String.subproj/CFAttributedStringPriv.h
+../../String.subproj/CFAttributedStringPriv.h

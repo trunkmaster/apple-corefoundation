@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Collections.subproj/CFCollections_Internal.h
+../../Collections.subproj/CFCollections_Internal.h

@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Base.subproj/CoreFoundation_Prefix.h
+../../Base.subproj/CoreFoundation_Prefix.h

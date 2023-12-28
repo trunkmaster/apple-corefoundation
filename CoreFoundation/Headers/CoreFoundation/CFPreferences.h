@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Preferences.subproj/CFPreferences.h
+../../Preferences.subproj/CFPreferences.h

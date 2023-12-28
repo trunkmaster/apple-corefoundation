@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/StringEncodings.subproj/CFUnicodePrecomposition.h
+../../StringEncodings.subproj/CFUnicodePrecomposition.h

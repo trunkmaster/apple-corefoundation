@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/PlugIn.subproj/CFPlugIn.h
+../../PlugIn.subproj/CFPlugIn.h

@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/String.subproj/CFRegularExpression.h
+../../String.subproj/CFRegularExpression.h

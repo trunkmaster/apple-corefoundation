@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Collections.subproj/NSCFArray.h
+../../Collections.subproj/NSCFArray.h

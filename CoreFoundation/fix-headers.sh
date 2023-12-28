@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p Headers/CoreFoundation
+
 if [[ "$1" == "-f" ]]; then
     FORCE=true
 else
@@ -11,10 +13,11 @@ for header in "${PWD}"/*.subproj/*.h; do
         if $FORCE; then
             rm Headers/CoreFoundation/"${header##*.subproj/}"
         else
+            echo "Already exists"
             continue
         fi
     fi
     # cp Headers/CoreFoundation/"${header##*.subproj/}" "$header"
     # rm Headers/CoreFoundation/"${header##*.subproj/}"
-    ln -s "$header" "${PWD}"/Headers/CoreFoundation/"${header##*.subproj}"
+    ln -s "../..${header##"${PWD}"}" "${PWD}"/Headers/CoreFoundation/"${header##*.subproj}"
 done

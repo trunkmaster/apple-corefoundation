@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Parsing.subproj/CFXMLInterface.h
+../../Parsing.subproj/CFXMLInterface.h

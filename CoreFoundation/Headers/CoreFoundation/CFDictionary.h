@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Collections.subproj/CFDictionary.h
+../../Collections.subproj/CFDictionary.h

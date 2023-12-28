@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Base.subproj/ForSwiftFoundationOnly.h
+../../Base.subproj/ForSwiftFoundationOnly.h

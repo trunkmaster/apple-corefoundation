@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Parsing.subproj/CFPropertyList_Private.h
+../../Parsing.subproj/CFPropertyList_Private.h

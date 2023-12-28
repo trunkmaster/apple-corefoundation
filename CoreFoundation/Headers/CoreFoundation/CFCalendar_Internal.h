@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Locale.subproj/CFCalendar_Internal.h
+../../Locale.subproj/CFCalendar_Internal.h

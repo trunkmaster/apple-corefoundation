@@ -1,1 +1,1 @@
-/home/ethan/Projects/GNUstep/Porting/swift-corelibs-foundation/CoreFoundation/Locale.subproj/CFDateFormatter_Private.h
+../../Locale.subproj/CFDateFormatter_Private.h
