@@ -8,7 +8,7 @@ libCoreFoundation_OBJC_FILES += \
 	Base.subproj/CFBase.m Base.subproj/CFFileUtilities.m Base.subproj/CFKnownLocations.m \
 	Base.subproj/CFPlatform.m Base.subproj/CFRuntime.m Base.subproj/CFSortFunctions.m \
 	Base.subproj/CFSystemDirectories.m Base.subproj/CFUtilities.m Base.subproj/CFUUID.m \
-	Base.subproj/CFWindowsUtilities.m \
+	Base.subproj/CFVersion.m Base.subproj/CFWindowsUtilities.m \
 	\
 	Base.subproj/NSCFType.m \
 	\

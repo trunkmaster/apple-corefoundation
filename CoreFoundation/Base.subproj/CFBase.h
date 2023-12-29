@@ -335,7 +335,7 @@ CF_EXTERN_C_BEGIN
 
 CF_EXPORT double kCFCoreFoundationVersionNumber;
 
-#if TARGET_OS_MAC
+// #if TARGET_OS_MAC
 #define kCFCoreFoundationVersionNumber10_0	196.40
 #define kCFCoreFoundationVersionNumber10_0_3	196.50
 #define kCFCoreFoundationVersionNumber10_1	226.00
@@ -423,9 +423,17 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber10_11_3   1256.14
 #define kCFCoreFoundationVersionNumber10_11_4   1258.1
 #define kCFCoreFoundationVersionNumber10_11_Max 1299
-#endif
+#define kCFCoreFoundationVersionNumber10_12_Max 1399
+#define kCFCoreFoundationVersionNumber10_13_Max 1499
+#define kCFCoreFoundationVersionNumber10_14_Max 1599
+#define kCFCoreFoundationVersionNumber10_15_Max 1699
+#define kCFCoreFoundationVersionNumber11_Max 1799
+#define kCFCoreFoundationVersionNumber12_Max 1899
+#define kCFCoreFoundationVersionNumber13_Max 1999
+#define kCFCoreFoundationVersionNumber14_Max 2099
+// #endif
 
-#if TARGET_OS_IPHONE
+// #if TARGET_OS_IPHONE
 #define kCFCoreFoundationVersionNumber_iPhoneOS_2_0 478.23
 #define kCFCoreFoundationVersionNumber_iPhoneOS_2_1 478.26
 #define kCFCoreFoundationVersionNumber_iPhoneOS_2_2 478.29
@@ -454,7 +462,53 @@ CF_EXPORT double kCFCoreFoundationVersionNumber;
 #define kCFCoreFoundationVersionNumber_iOS_9_3 1242.13
 #define kCFCoreFoundationVersionNumber_iOS_9_4 1280.38
 #define kCFCoreFoundationVersionNumber_iOS_9_x_Max 1299
-#endif
+#define kCFCoreFoundationVersionNumber_iOS_10_0 1348.00
+#define kCFCoreFoundationVersionNumber_iOS_10_1 1348.00
+#define kCFCoreFoundationVersionNumber_iOS_10_2 1348.22
+#define kCFCoreFoundationVersionNumber_iOS_10_3 1349.56
+#define kCFCoreFoundationVersionNumber_iOS_10_x_Max 1399
+#define kCFCoreFoundationVersionNumber_iOS_11_0_b1 1429.15
+#define kCFCoreFoundationVersionNumber_iOS_11_0 1443.00
+#define kCFCoreFoundationVersionNumber_iOS_11_1 1445.32
+#define kCFCoreFoundationVersionNumber_iOS_11_2 1450.14
+#define kCFCoreFoundationVersionNumber_iOS_11_3 1452.23
+#define kCFCoreFoundationVersionNumber_iOS_11_4 1452.23
+#define kCFCoreFoundationVersionNumber_iOS_11_x_Max 1499
+#define kCFCoreFoundationVersionNumber_iOS_12_0_b1 1535.13
+#define kCFCoreFoundationVersionNumber_iOS_12_0 1556.00
+#define kCFCoreFoundationVersionNumber_iOS_12_1 1560.10
+#define kCFCoreFoundationVersionNumber_iOS_12_2 1570.15
+#define kCFCoreFoundationVersionNumber_iOS_12_3 1575.13
+#define kCFCoreFoundationVersionNumber_iOS_12_4 1575.17
+#define kCFCoreFoundationVersionNumber_iOS_12_5 1575.23
+#define kCFCoreFoundationVersionNumber_iOS_12_x_Max 1599
+#define kCFCoreFoundationVersionNumber_iOS_13_0_b1 1652.20
+#define kCFCoreFoundationVersionNumber_iOS_13_0 1665.15
+#define kCFCoreFoundationVersionNumber_iOS_13_1 1671.101
+#define kCFCoreFoundationVersionNumber_iOS_13_2 1673.126
+#define kCFCoreFoundationVersionNumber_iOS_13_3 1674.102
+#define kCFCoreFoundationVersionNumber_iOS_13_4 1675.129
+#define kCFCoreFoundationVersionNumber_iOS_13_5 1676.104
+#define kCFCoreFoundationVersionNumber_iOS_13_6 1677.104
+#define kCFCoreFoundationVersionNumber_iOS_13_7 1677.104
+#define kCFCoreFoundationVersionNumber_iOS_13_x_Max 1699
+#define kCFCoreFoundationVersionNumber_iOS_14_0_b1 1740.0
+#define kCFCoreFoundationVersionNumber_iOS_14_0 1751.108
+#define kCFCoreFoundationVersionNumber_iOS_14_1 1751.108
+#define kCFCoreFoundationVersionNumber_iOS_14_2 1770.106
+#define kCFCoreFoundationVersionNumber_iOS_14_3_b1 1770.300
+#define kCFCoreFoundationVersionNumber_iOS_14_3 1770.300
+#define kCFCoreFoundationVersionNumber_iOS_14_4 1774.101
+#define kCFCoreFoundationVersionNumber_iOS_14_5 1775.118
+#define kCFCoreFoundationVersionNumber_iOS_14_6 1776.103
+#define kCFCoreFoundationVersionNumber_iOS_14_7 1777.103
+#define kCFCoreFoundationVersionNumber_iOS_14_8 1778.101
+#define kCFCoreFoundationVersionNumber_iOS_14_x_Max 1799
+#define kCFCoreFoundationVersionNumber_iOS_15_0 1854.0
+#define kCFCoreFoundationVersionNumber_iOS_15_x_Max 1899
+#define kCFCoreFoundationVersionNumber_iOS_16_x_Max 1999
+#define kCFCoreFoundationVersionNumber_iOS_17_x_Max 2099
+// #endif
 
 #if __LLP64__
 typedef unsigned long long CFTypeID;
