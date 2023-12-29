@@ -95,7 +95,7 @@ libCoreFoundation_HEADER_FILES = CFArray.h CFAsmMacros.h CFAttributedString.h \
 	CoreFoundation_Prefix.h ForFoundationOnly.h ForSwiftFoundationOnly.h GSCFInternal.h \
 	TargetConditionals.h BridgeHelpers.h \
 	\
-	NSCFLocale.h NSCFString.h NSCFType.h
+	NSCFLocale.h NSCFString.h NSCFType.h NSCFDictionary.h NSCFArray.h
 
 libCoreFoundation_INCLUDE_DIRS += -I./Headers
 libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function -DBINARY_SUPPORT_DLFCN
