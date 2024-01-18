@@ -240,6 +240,7 @@ add_framework(CoreFoundation
                 #RunLoop.subproj/CFMachPort.h
                 RunLoop.subproj/CFMessagePort.h
                 RunLoop.subproj/CFRunLoop.h
+                RunLoop.subproj/CFFileDescriptor.h
                 RunLoop.subproj/CFSocket.h
                 # Stream
                 Stream.subproj/CFStream.h
@@ -324,6 +325,7 @@ add_framework(CoreFoundation
                 # RunLoop.subproj/CFMachPort_Lifetime.c
                 # RunLoop.subproj/CFMessagePort.c
                 RunLoop.subproj/CFRunLoop.c
+                RunLoop.subproj/CFFileDescriptor.c
                 RunLoop.subproj/CFSocket.c
                 # Stream
                 Stream.subproj/CFConcreteStreams.c
