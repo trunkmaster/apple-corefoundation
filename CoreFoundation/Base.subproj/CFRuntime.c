@@ -244,6 +244,7 @@ _CFClassTables __CFRuntimeClassTables __attribute__((aligned)) = {
     [_kCFRuntimeIDCFRunLoopSource] = &__CFRunLoopSourceClass,
     [_kCFRuntimeIDCFRunLoopObserver] = &__CFRunLoopObserverClass,
     [_kCFRuntimeIDCFRunLoopTimer] = &__CFRunLoopTimerClass,
+    [_kCFRuntimeIDCFFileDescriptor] = &__CFFileDescriptorClass,
     [_kCFRuntimeIDCFSocket] = &__CFSocketClass,
     [_kCFRuntimeIDCFReadStream] = &__CFReadStreamClass,
     [_kCFRuntimeIDCFWriteStream] = &__CFWriteStreamClass,
