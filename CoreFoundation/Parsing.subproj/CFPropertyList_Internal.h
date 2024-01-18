@@ -10,7 +10,7 @@
 #if !defined(__COREFOUNDATION_CFPROPERTYLIST_INTERNAL__)
 #define __COREFOUNDATION_CFPROPERTYLIST_INTERNAL 1
 
-#include "CFBase.h"
+#include <CoreFoundation/CFBase.h>
 
 /// Limit for the max recursion depth to avoid unbounded stack explosion when
 /// parsing a crafted plist during validation of an object graph and during reading.

@@ -11,6 +11,7 @@
 #include <CoreFoundation/CFRuntime.h>
 #include "CFInternal.h"
 #include "CFRuntime_Internal.h"
+#include "CFCalendar_Internal.h"
 
 #include <CoreFoundation/CFCalendar.h>
 #include <CoreFoundation/CFDate.h>

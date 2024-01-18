@@ -10,6 +10,7 @@
 
 #include <CoreFoundation/CFRuntime.h>
 #include <CoreFoundation/CFNumber.h>
+#include <ForSwiftFoundationOnly.h>
 #include <string.h>
 #include "CFStreamInternal.h"
 #include "CFRuntime_Internal.h"

@@ -392,6 +392,8 @@ enum {
 
 };
 
+#define __kCFAllocatorTypeID_CONST	2
+
 CF_INLINE CFAllocatorRef __CFGetDefaultAllocator(void) {
     CFAllocatorRef allocator = (CFAllocatorRef)_CFGetTSD(__CFTSDKeyAllocator);
     if (NULL == allocator) {

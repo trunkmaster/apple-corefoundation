@@ -46,6 +46,14 @@ CF_EXTERN_C_END \
 CF_ASSUME_NONNULL_END \
 CF_IMPLICIT_BRIDGING_DISABLED
 
+#if DEPLOYMENT_RUNTIME_C
+_CF_EXPORT_SCOPE_BEGIN
+    CF_EXPORT Boolean _CFIsMainThread(void);
+_CF_EXPORT_SCOPE_END
+typedef pthread_key_t _CFThreadSpecificKey;
+typedef pthread_t _CFThreadRef;
+#endif
+
 // NOTE: miscellaneous declarations are at the end
 
 #pragma mark - CFRuntime

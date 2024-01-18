@@ -26,6 +26,7 @@ find_package(Threads REQUIRED)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
   find_package(LibXml2 REQUIRED)
+  find_package(ICU COMPONENTS uc i18n REQUIRED OPTIONAL_COMPONENTS data)
   find_package(CURL CONFIG)
   if(CURL_FOUND)
     set(CURL_VERSION_STRING ${CURL_VERSION})
@@ -126,6 +127,7 @@ add_framework(CoreFoundation
                 Base.subproj/CFAsmMacros.h
                 Base.subproj/CFInternal.h
                 Base.subproj/CFKnownLocations.h
+                Base.subproj/CFLocking.h
                 Base.subproj/CFLogUtilities.h
                 Base.subproj/CFPriv.h
                 Base.subproj/CFOverflow.h
@@ -192,28 +194,10 @@ add_framework(CoreFoundation
                 URL.subproj/CFURLPriv.h
                 URL.subproj/CFURLSessionInterface.h
               PUBLIC_HEADERS
-                # FIXME: PrivateHeaders referenced by public headers
-                Base.subproj/CFKnownLocations.h
-                Base.subproj/CFLocking.h
+                # FIXME: remove this in release build
                 Base.subproj/CFLogUtilities.h
-                Base.subproj/CFPriv.h
-                Base.subproj/CFRuntime.h
-                Base.subproj/ForFoundationOnly.h
-                Base.subproj/ForSwiftFoundationOnly.h
-                Locale.subproj/CFCalendar_Internal.h
-                Locale.subproj/CFDateComponents.h
-                Locale.subproj/CFDateInterval.h
-                Locale.subproj/CFLocaleInternal.h
-                PlugIn.subproj/CFBundlePriv.h
-                Stream.subproj/CFStreamPriv.h
-                String.subproj/CFCharacterSetPriv.h
-                String.subproj/CFRegularExpression.h
-                String.subproj/CFRunArray.h
-                StringEncodings.subproj/CFStringEncodingConverter.h
-                StringEncodings.subproj/CFStringEncodingConverterExt.h
-                URL.subproj/CFURLPriv.h
-                URL.subproj/CFURLSessionInterface.h
-                Locale.subproj/CFDateIntervalFormatter.h
+                Base.subproj/CoreFoundation.h
+                Base.subproj/SwiftRuntime/TargetConditionals.h
 
                 # AppServices
                 AppServices.subproj/CFNotificationCenter.h
@@ -224,8 +208,6 @@ add_framework(CoreFoundation
                 Base.subproj/CFByteOrder.h
                 Base.subproj/CFUUID.h
                 Base.subproj/CFUtilities.h
-                Base.subproj/SwiftRuntime/CoreFoundation.h
-                Base.subproj/SwiftRuntime/TargetConditionals.h
                 # Collections
                 Collections.subproj/CFArray.h
                 Collections.subproj/CFBag.h
@@ -255,7 +237,7 @@ add_framework(CoreFoundation
                 # Preferences
                 Preferences.subproj/CFPreferences.h
                 # RunLoop
-                RunLoop.subproj/CFMachPort.h
+                #RunLoop.subproj/CFMachPort.h
                 RunLoop.subproj/CFMessagePort.h
                 RunLoop.subproj/CFRunLoop.h
                 RunLoop.subproj/CFSocket.h
@@ -413,47 +395,6 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
   endif()
 endif()
 
-add_framework(CFURLSessionInterface
-                ${FRAMEWORK_LIBRARY_TYPE}
-              FRAMEWORK_DIRECTORY
-                CFURLSessionInterface_FRAMEWORK_DIRECTORY
-              MODULE_MAP
-                URL.subproj/module.modulemap
-              PRIVATE_HEADERS
-                URL.subproj/CFURLSessionInterface.h
-              PUBLIC_HEADERS
-                URL.subproj/CFURLSessionInterface.h
-              SOURCES
-                URL.subproj/CFURLSessionInterface.c)
-add_dependencies(CFURLSessionInterface CoreFoundation)
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  target_compile_definitions(CFURLSessionInterface
-                             PRIVATE
-                               CURL_STATICLIB)
-endif()
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  target_link_libraries(CFURLSessionInterface PRIVATE
-    CURL::libcurl)
-endif()
-
-add_framework(CFXMLInterface
-                ${FRAMEWORK_LIBRARY_TYPE}
-              FRAMEWORK_DIRECTORY
-                CFXMLInterface_FRAMEWORK_DIRECTORY
-              MODULE_MAP
-                Parsing.subproj/module.modulemap
-              PRIVATE_HEADERS
-                Parsing.subproj/CFXMLInterface.h
-              PUBLIC_HEADERS
-                Parsing.subproj/CFXMLInterface.h
-              SOURCES
-                Parsing.subproj/CFXMLInterface.c)
-add_dependencies(CFXMLInterface CoreFoundation)
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  target_link_libraries(CFXMLInterface PRIVATE
-    LibXml2::LibXml2)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_library(CoreFoundationResources OBJECT
     CoreFoundation.rc)
@@ -497,30 +438,12 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_SYSTEM_NAME STREQUAL Dar
   target_link_libraries(CoreFoundation
                         PRIVATE
                           m)
-  target_link_libraries(CFURLSessionInterface
-                        PRIVATE
-                          m)
-  target_link_libraries(CFXMLInterface
-                        PRIVATE
-                          m)
 endif()
 target_link_libraries(CoreFoundation
                       PRIVATE
                         dispatch)
-target_link_libraries(CFURLSessionInterface
-                      PRIVATE
-                        dispatch)
-target_link_libraries(CFXMLInterface
-                      PRIVATE
-                        dispatch)
 if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
   target_link_libraries(CoreFoundation
-                        PRIVATE
-                          icucore)
-  target_link_libraries(CFURLSessionInterface
-                        PRIVATE
-                          icucore)
-  target_link_libraries(CFXMLInterface
                         PRIVATE
                           icucore)
   set_target_properties(CoreFoundation
@@ -530,8 +453,6 @@ endif()
 
 install(TARGETS
           CoreFoundation
-          CFURLSessionInterface
-          CFXMLInterface
         DESTINATION
           "${CMAKE_INSTALL_FULL_LIBDIR}")
 
@@ -542,6 +463,6 @@ string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 install(DIRECTORY
           ${CoreFoundation_FRAMEWORK_DIRECTORY}
         DESTINATION
-          ${CMAKE_INSTALL_PREFIX}/System/Library/Frameworks
+          ${CMAKE_INSTALL_PREFIX}/Frameworks
         USE_SOURCE_PERMISSIONS
         PATTERN PrivateHeaders EXCLUDE)

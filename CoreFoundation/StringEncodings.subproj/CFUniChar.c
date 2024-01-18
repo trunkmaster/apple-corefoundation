@@ -10,7 +10,6 @@
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFByteOrder.h>
-#include "CFBase.h"
 #include "CFInternal.h"
 #include "CFUniChar.h" 
 #include "CFStringEncodingConverterExt.h"

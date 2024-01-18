@@ -70,7 +70,7 @@
 
 #include <stdbool.h>
 
-#if __BLOCKS__ && (TARGET_OS_OSX || TARGET_OS_IPHONE)
+#if __BLOCKS__ && (TARGET_OS_OSX || TARGET_OS_IPHONE || __HAS_DISPATCH__)
 #include <Block.h>
 #endif
 

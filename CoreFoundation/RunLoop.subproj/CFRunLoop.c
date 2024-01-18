@@ -69,7 +69,9 @@ extern bool _dispatch_runloop_root_queue_perform_4CF(dispatch_queue_t queue);
 #if TARGET_OS_MAC
 typedef mach_port_t dispatch_runloop_handle_t;
 #elif defined(__linux__) || defined(__FreeBSD__)
+#if !__has_include(<dispatch/private.h>)
 typedef int dispatch_runloop_handle_t;
+#endif
 #elif TARGET_OS_WIN32
 typedef HANDLE dispatch_runloop_handle_t;
 #else
