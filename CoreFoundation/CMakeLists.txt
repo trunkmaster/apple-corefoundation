@@ -254,6 +254,8 @@ add_framework(CoreFoundation
                 URL.subproj/CFURLAccess.h
                 URL.subproj/CFURLComponents.h
               SOURCES
+                # AppServices
+                AppServices.subproj/CFNotificationCenter.c
                 # Base
                 Base.subproj/CFBase.c
                 Base.subproj/CFFileUtilities.c

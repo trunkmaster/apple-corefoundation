@@ -166,6 +166,7 @@ CF_PRIVATE const CFRuntimeClass __CFRunLoopSourceClass;
 CF_PRIVATE const CFRuntimeClass __CFRunLoopObserverClass;
 CF_PRIVATE const CFRuntimeClass __CFRunLoopTimerClass;
 CF_PRIVATE const CFRuntimeClass __CFFileDescriptorClass;
+CF_PRIVATE const CFRuntimeClass __CFNotificationCenterClass;
 CF_PRIVATE const CFRuntimeClass __CFSocketClass;
 CF_PRIVATE const CFRuntimeClass __CFReadStreamClass;
 CF_PRIVATE const CFRuntimeClass __CFWriteStreamClass;
