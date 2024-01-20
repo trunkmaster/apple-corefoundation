@@ -409,9 +409,7 @@ typedef struct _CFThreadAttributes {
 } _CFThreadAttributes;
 typedef unsigned long _CFThreadSpecificKey;
 #elif _POSIX_THREADS
-typedef pthread_t _CFThreadRef;
 typedef pthread_attr_t _CFThreadAttributes;
-typedef pthread_key_t _CFThreadSpecificKey;
 #endif
 
 CF_CROSS_PLATFORM_EXPORT Boolean _CFIsMainThread(void);
