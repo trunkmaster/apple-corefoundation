@@ -189,7 +189,8 @@ static dispatch_queue_t __ ## PREFIX ## Queue(void) {			\
 #define CF_RETAIN_BALANCED_ELSEWHERE(obj, identified_location) do { } while (0)
 #endif
 
-#if (TARGET_OS_LINUX && !__USE_MISC && !TARGET_OS_ANDROID && !TARGET_OS_CYGWIN) || TARGET_OS_WIN32
+#if (TARGET_OS_LINUX && !HAVE_BSD_STRING && !TARGET_OS_ANDROID && !TARGET_OS_CYGWIN) || TARGET_OS_WIN32
+
 CF_INLINE size_t
 strlcpy(char * dst, const char * src, size_t maxlen) {
     const size_t srclen = strlen(src);
