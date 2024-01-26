@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 project(CoreFoundation
-  VERSION 1338
+  VERSION 5.9.2
   LANGUAGES ASM C)
 
 set(CMAKE_C_STANDARD 99)
@@ -460,6 +460,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
                         PROPERTIES LINK_FLAGS
                           -Xlinker;-alias_list;-Xlinker;Base.subproj/DarwinSymbolAliases;-twolevel_namespace;-sectcreate;__UNICODE;__csbitmaps;CharacterSets/CFCharacterSetBitmaps.bitmap;-sectcreate;__UNICODE;__properties;CharacterSets/CFUniCharPropertyDatabase.data;-sectcreate;__UNICODE;__data;CharacterSets/CFUnicodeData-L.mapping;-segprot;__UNICODE;r;r)
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+                        VERSION ${PROJECT_VERSION}
+                        SOVERSION ${PROJECT_VERSION_MAJOR})
 
 install(TARGETS
           CoreFoundation
