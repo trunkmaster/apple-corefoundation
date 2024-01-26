@@ -46,6 +46,9 @@
 #define ASL_LEVEL_DEBUG 7
 #endif
 
+#if TARGET_OS_MAC || TARGET_OS_LINUX
+#include <dlfcn.h>
+#endif
 
 #if TARGET_OS_MAC
 #include <unistd.h>
@@ -54,7 +57,6 @@
 #include <mach-o/loader.h>
 #include <mach-o/dyld.h>
 #include <crt_externs.h>
-#include <dlfcn.h>
 #include <vproc.h>
 #include <libproc.h>
 #include <sys/sysctl.h>
@@ -523,20 +525,27 @@ CF_PRIVATE void *__CFLookupCoreServicesInternalFunction(const char *name) {
     }
     return dyfunc;
 }
+#endif
 
+#if TARGET_OS_MAC || TARGET_OS_LINUX
 CF_PRIVATE void *__CFLookupCFNetworkFunction(const char *name) {
     static void *image = NULL;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         const char *path = __CFgetenvIfNotRestricted("CFNETWORK_LIBRARY_PATH");
         if (!path) {
-            path = "/System/Library/Frameworks/CFNetwork.framework/CFNetwork";
+#if TARGET_OS_LINUX
+          path = "/usr/lib/libCFNetwork.so";
+#else
+          path = "/System/Library/Frameworks/CFNetwork.framework/CFNetwork";
+#endif
         }
+        fprintf(stderr, "CFNetwork library path: %s\n", path);
         image = dlopen(path, RTLD_LAZY | RTLD_LOCAL);
     });
     void *dyfunc = NULL;
     if (image) {
-	dyfunc = dlsym(image, name);
+      dyfunc = dlsym(image, name);
     }
     return dyfunc;
 }

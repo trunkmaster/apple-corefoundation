@@ -966,7 +966,7 @@ CF_INLINE uintptr_t __CFISAForTypeID(CFTypeID typeID) {
 //   DEFINE_WEAK_CARBONCORE_FUNC(void, DisposeHandle, (Handle h), (h))
 //
 
-#if TARGET_OS_MAC
+#if TARGET_OS_MAC || TARGET_OS_LINUX
 
 extern void *__CFLookupCFNetworkFunction(const char *name);
 

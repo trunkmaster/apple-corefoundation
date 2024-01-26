@@ -109,7 +109,7 @@ static struct {
 
 #define CFNETWORK_CALL(sym, args)		((CFNetworkSupport.sym)args)
 
-#if TARGET_OS_MAC
+#if TARGET_OS_MAC || TARGET_OS_LINUX
 #define CFNETWORK_LOAD_SYM(sym)   __CFLookupCFNetworkFunction(#sym)
 #elif TARGET_OS_WIN32
 #define CFNETWORK_LOAD_SYM(sym)   (void *)GetProcAddress(CFNetworkSupport.image, #sym)
@@ -118,7 +118,7 @@ static struct {
 static void initializeCFNetworkSupport(void) {
     __CFBitSet(CFNetworkSupport.flags, kTriedToLoad);
 
-#if TARGET_OS_MAC
+#if TARGET_OS_MAC || TARGET_OS_LINUX
     CFNetworkSupport._CFSocketStreamCreatePair = CFNETWORK_LOAD_SYM(_CFSocketStreamCreatePair);
     CFNetworkSupport._CFErrorCreateWithStreamError = CFNETWORK_LOAD_SYM(_CFErrorCreateWithStreamError);
     CFNetworkSupport._CFStreamErrorFromCFError = CFNETWORK_LOAD_SYM(_CFStreamErrorFromCFError);
