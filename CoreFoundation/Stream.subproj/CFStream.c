@@ -1861,11 +1861,11 @@ static void waitForOpen(struct _CFStream *stream) {
     _CFStreamUnscheduleFromRunLoop(stream, runLoop, privateMode);
 }
 
-CF_PRIVATE CFArrayRef _CFReadStreamCopyRunLoopsAndModes(CFReadStreamRef readStream) {
+CF_EXPORT CFArrayRef _CFReadStreamCopyRunLoopsAndModes(CFReadStreamRef readStream) {
     return _CFStreamCopyRunLoopsAndModes((struct _CFStream *)readStream);
 }
 
-CF_PRIVATE CFArrayRef _CFWriteStreamCopyRunLoopsAndModes(CFWriteStreamRef writeStream) {
+CF_EXPORT CFArrayRef _CFWriteStreamCopyRunLoopsAndModes(CFWriteStreamRef writeStream) {
     return _CFStreamCopyRunLoopsAndModes((struct _CFStream *)writeStream);
 }
 

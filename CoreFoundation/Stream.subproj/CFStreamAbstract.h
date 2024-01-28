@@ -83,6 +83,11 @@ CFWriteStreamRef CFWriteStreamCreate(CFAllocatorRef alloc, const CFWriteStreamCa
    CFReadStreamCreate() or CFWriteStreamCreate(), above.  They are NOT safe for toll-free bridged objects, 
    so the caller must be sure the argument passed is not such an object. */
 
+CF_EXPORT
+CFArrayRef _CFReadStreamCopyRunLoopsAndModes(CFReadStreamRef readStream);
+CF_EXPORT
+CFArrayRef _CFWriteStreamCopyRunLoopsAndModes(CFWriteStreamRef writeStream);
+
 // To be called by the concrete stream implementation (the callbacks) when an event occurs. error may be NULL if event != kCFStreamEventErrorOccurred
 // error should be a CFErrorRef if the callbacks are version 2 or later; otherwise it should be a (CFStreamError *).
 CF_EXPORT
