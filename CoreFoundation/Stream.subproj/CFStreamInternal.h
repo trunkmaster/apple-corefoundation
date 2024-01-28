@@ -16,7 +16,7 @@
 
 #if CF_BUILDING_CF
 #include "CFInternal.h"
-#else
+#else // for CFNetwork use
 #define CF_PRIVATE extern __attribute__((__visibility__("hidden")))
 #include "CFLocking.h"
 #endif
