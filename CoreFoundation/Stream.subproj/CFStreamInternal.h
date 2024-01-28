@@ -12,8 +12,14 @@
 #include <CoreFoundation/CFStreamAbstract.h>
 #include <CoreFoundation/CFStreamPriv.h>
 #include <CoreFoundation/CFBase.h>
-#include "CFInternal.h"
 #include <CoreFoundation/CFRuntime.h>
+
+#if CF_BUILDING_CF
+#include "CFInternal.h"
+#else
+#define CF_PRIVATE extern __attribute__((__visibility__("hidden")))
+#include "CFLocking.h"
+#endif
 
 CF_EXTERN_C_BEGIN
 
