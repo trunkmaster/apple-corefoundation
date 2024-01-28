@@ -1,3 +1,5 @@
+# export compile options for langd with command:
+# $ cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 cmake_minimum_required(VERSION 3.12)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
@@ -8,6 +10,7 @@ project(CoreFoundation
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED YES)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # TODO(compnerd): this should be re-enabled once CoreFoundation annotations have
 # been reconciled.  Hidden visibility should ensure that internal interfaces are
@@ -373,14 +376,15 @@ target_compile_definitions(CoreFoundation
                              $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICHAR_DB="CharacterSets/CFUniCharPropertyDatabase.data">
                              $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICODE_DATA_B="CharacterSets/CFUnicodeData-B.mapping">
                              $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICODE_DATA_L="CharacterSets/CFUnicodeData-L.mapping">)
-target_include_directories(CoreFoundation
+target_include_directories(CoreFoundation 
                            PRIVATE
                              ${PROJECT_SOURCE_DIR})
-target_link_libraries(CoreFoundation PRIVATE
-  Threads::Threads
-  ${CMAKE_DL_LIBS}
-  BlocksRuntime
-  dispatch)
+target_link_libraries(CoreFoundation 
+                      PRIVATE
+                        Threads::Threads
+                        ${CMAKE_DL_LIBS}
+                        BlocksRuntime
+                        dispatch)
 if(CMAKE_SYSTEM_NAME STREQUAL Android)
   target_link_libraries(CoreFoundation PRIVATE
     log)
@@ -478,5 +482,5 @@ install(DIRECTORY
           ${CoreFoundation_FRAMEWORK_DIRECTORY}
         DESTINATION
           ${CMAKE_INSTALL_PREFIX}/Frameworks
-        USE_SOURCE_PERMISSIONS
-        PATTERN PrivateHeaders EXCLUDE)
+        USE_SOURCE_PERMISSIONS)
+#        PATTERN PrivateHeaders EXCLUDE)
