@@ -112,15 +112,18 @@ void __CFFDEnableSources(CFFileDescriptorRef f, CFOptionFlags callBackTypes) {
 // added to a run loop mode. Can be NULL. 
 static void __CFFDSchedule(void *info, CFRunLoopRef rl, CFStringRef mode) {
   __CFFileDescriptor *_info = info;
-  CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: %li)."), (long)rl);
+  // CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: %li)."), (long)rl);
   _info->_runLoop = rl;
 }
 
 // TODO
 // A cancel callback for the run loop source. This callback is called when the source is
-// removed from a run loop mode. Can be NULL. 
-static void __CFFDCancel(void *info, CFRunLoopRef rl, CFStringRef mode) {
-  CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor CANCEL callback invoked."));
+// removed from a run loop mode. Can be NULL.
+static void __CFFDCancel(void *info, CFRunLoopRef rl, CFStringRef mode)
+{
+  __CFFileDescriptor *_info = info;
+  // CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor CANCEL callback invoked."));
+  _info->_runLoop = NULL;
 }
 
 // TODO
@@ -172,7 +175,8 @@ CFFileDescriptorRef CFFileDescriptorCreate(CFAllocatorRef allocator,
                                            CFFileDescriptorNativeDescriptor fd,
                                            Boolean closeOnInvalidate,
                                            CFFileDescriptorCallBack callout,
-                                           const CFFileDescriptorContext *context) {
+                                           const CFFileDescriptorContext *context)
+{
   CFIndex size;
   CFFileDescriptorRef memory;
 
@@ -209,7 +213,6 @@ CFFileDescriptorRef CFFileDescriptorCreate(CFAllocatorRef allocator,
     
   return memory;
 }
-
 
 CFFileDescriptorNativeDescriptor CFFileDescriptorGetNativeDescriptor(CFFileDescriptorRef f) {
   if (!f || (CFGetTypeID(f) != CFFileDescriptorGetTypeID()) || !__CFFDIsValid(f)) {
