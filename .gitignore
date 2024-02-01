@@ -24,6 +24,7 @@ project.xcworkspace
 Build
 .build
 .configuration
+.cache
 
 *.swp
 *.orig
