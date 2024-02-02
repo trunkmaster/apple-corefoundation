@@ -82,11 +82,15 @@ void __CFFDSuspendSource(CFFileDescriptorRef f, CFOptionFlags callBackType) {
 // callBackType will be one of Read and Write
 void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType) {
   if (callBackType == kCFFileDescriptorReadCallBack && f->_read_source) {
+    // Suspended runloop source can't be released so resume
+    dispatch_resume(f->_read_source);
     dispatch_source_cancel(f->_read_source);
     dispatch_release(f->_read_source);
     f->_read_source = NULL;
   }
   if (callBackType == kCFFileDescriptorWriteCallBack && f->_write_source) {
+    // Suspended runloop source can't be released so resume
+    dispatch_resume(f->_write_source);
     dispatch_source_cancel(f->_write_source);
     dispatch_release(f->_write_source);
     f->_write_source = NULL;
@@ -132,7 +136,7 @@ static void __CFFDPerformV0(void *info) {
   CFFileDescriptorRef f = info;
   /* CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor PERFORM callback invoked (runloop: %li)."), */
   /*       (long)_info->_runLoop); */
-  f->_callout(f, kCFFileDescriptorWriteCallBack, f);
+  f->_callout(f, kCFFileDescriptorWriteCallBack, f->_context.info);
 }
 
 #pragma mark - Runtime
