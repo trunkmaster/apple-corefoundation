@@ -90,6 +90,7 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType) {
     // Suspended runloop source can't be released so resume
     if (f->_read_source_suspended != FALSE) {
       dispatch_resume(f->_read_source);
+      f->_read_source_suspended = FALSE;
     }
     dispatch_source_cancel(f->_read_source);
     dispatch_release(f->_read_source);
@@ -99,6 +100,7 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType) {
     // Suspended runloop source can't be released so resume
     if (f->_write_source_suspended != FALSE) {
       dispatch_resume(f->_write_source);
+      f->_write_source_suspended = FALSE;
     }
     dispatch_source_cancel(f->_write_source);
     dispatch_release(f->_write_source);
@@ -147,7 +149,8 @@ static void __CFFDPerformV0(void *info) {
   CFFileDescriptorRef f = info;
   /* CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor PERFORM callback invoked (runloop: %li)."), */
   /*       (long)_info->_runLoop); */
-  f->_callout(f, kCFFileDescriptorWriteCallBack, f->_context.info);
+  // CFRunLoop soesn't like NULL `context` parameter - pass CFFileDescriptor to omit lockups.
+  f->_callout(f, kCFFileDescriptorWriteCallBack, f->_context.info ? f->_context.info : f);
 }
 
 #pragma mark - Runtime
