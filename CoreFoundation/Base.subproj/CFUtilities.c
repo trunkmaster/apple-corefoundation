@@ -540,7 +540,7 @@ CF_PRIVATE void *__CFLookupCFNetworkFunction(const char *name) {
           path = "/System/Library/Frameworks/CFNetwork.framework/CFNetwork";
 #endif
         }
-        fprintf(stderr, "CFNetwork library path: %s\n", path);
+        CFLog(kCFLogLevelInfo, CFSTR("CoreFoundation: loading CFNetwork at path: %s"), path);
         image = dlopen(path, RTLD_LAZY | RTLD_LOCAL);
     });
     void *dyfunc = NULL;
