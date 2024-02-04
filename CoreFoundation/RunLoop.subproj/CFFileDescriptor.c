@@ -148,7 +148,6 @@ static void __CFFDCancelCallback(void *info, CFRunLoopRef rl, CFStringRef mode)
   }
 }
 
-// TODO
 // A perform callback for the run loop source. This callback is called when the source has fired.
 static void __CFFDPerformCallback(void *info)
 {
@@ -161,9 +160,10 @@ static void __CFFDPerformCallback(void *info)
   if (cffd->_context.info) {
     context_info = cffd->_context.info;
   } else {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor PERFORM callback: context->info is NULL passing self"));
+    // CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor PERFORM callback: context->info is NULL passing self"));
     context_info = cffd;
   }
+
   cffd->_callout(cffd, kCFFileDescriptorWriteCallBack, context_info);
 }
 
