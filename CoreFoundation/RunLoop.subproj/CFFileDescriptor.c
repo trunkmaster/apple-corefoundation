@@ -61,8 +61,12 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
       __CFFDSuspendSource(f, callBackType);
 
       // Tell runloop about event (it will call 'perform' callback)
-      CFRunLoopSourceSignal(f->_source0);
-      CFRunLoopWakeUp(f->_runLoop);
+      if (f && f->_source0) {
+        CFRunLoopSourceSignal(f->_source0);
+      }
+      if (f && f->_runLoop) {
+        CFRunLoopWakeUp(f->_runLoop);
+      }
     });
   }
 
@@ -233,6 +237,11 @@ CFFileDescriptorRef CFFileDescriptorCreate(CFAllocatorRef allocator, CFFileDescr
     memory->_context.retain = context->retain;
     memory->_context.release = context->release;
     memory->_context.copyDescription = context->copyDescription;
+  } else {
+    memory->_context.info = (void *)CFStringCreateWithFormat(NULL, 0, CFSTR("CFFileDescriptor %i"), fd);
+    memory->_context.retain = CFRetain;
+    memory->_context.release = CFRelease;
+    memory->_context.copyDescription = CFCopyDescription;
   }
 
   memory->_runLoop = NULL;
@@ -246,6 +255,43 @@ CFFileDescriptorRef CFFileDescriptorCreate(CFAllocatorRef allocator, CFFileDescr
   __CFRuntimeSetValue(memory, 1, 1, closeOnInvalidate);
 
   return memory;
+}
+
+CFRunLoopSourceRef CFFileDescriptorCreateRunLoopSource(CFAllocatorRef allocator, CFFileDescriptorRef f, CFIndex order)
+{
+  CFRunLoopSourceRef result = NULL;
+
+  if (CFFileDescriptorIsValid(f)) {
+    __CFLock(&f->_lock);
+
+    if (NULL != f->_source0 && !CFRunLoopSourceIsValid(f->_source0)) {
+      CFRelease(f->_source0);
+      f->_source0 = NULL;
+    }
+    if (NULL == f->_source0) {
+      CFRunLoopSourceContext context;
+      context.version = 0;
+      context.info = f;
+      context.retain = CFRetain;
+      context.release = CFRelease;
+      context.copyDescription = CFCopyDescription;
+      context.equal = CFEqual;
+      context.hash = CFHash;
+      context.schedule = __CFFDScheduleCallback;
+      context.cancel = __CFFDCancelCallback;
+      context.perform = __CFFDPerformCallback;
+
+      f->_source0 = CFRunLoopSourceCreate(allocator, order, &context);
+      CFRetain(f->_source0);
+      result = f->_source0;
+    }
+
+    __CFUnlock(&f->_lock);
+  } else {
+    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptorCreateRunLoopSource: CFFileDescriptorRef is invalid"));
+  }
+
+  return result;
 }
 
 CFFileDescriptorNativeDescriptor CFFileDescriptorGetNativeDescriptor(CFFileDescriptorRef f)
@@ -352,41 +398,5 @@ Boolean CFFileDescriptorIsValid(CFFileDescriptorRef f)
   return __CFFDIsValid(f);
 }
 
-CFRunLoopSourceRef CFFileDescriptorCreateRunLoopSource(CFAllocatorRef allocator, CFFileDescriptorRef f, CFIndex order)
-{
-  CFRunLoopSourceRef result = NULL;
-
-  if (CFFileDescriptorIsValid(f)) {
-    __CFLock(&f->_lock);
-
-    if (NULL != f->_source0 && !CFRunLoopSourceIsValid(f->_source0)) {
-      CFRelease(f->_source0);
-      f->_source0 = NULL;
-    }
-    if (NULL == f->_source0) {
-      CFRunLoopSourceContext context;
-      context.version = 0;
-      context.info = f;
-      context.retain = CFRetain;
-      context.release = CFRelease;
-      context.copyDescription = CFCopyDescription;
-      context.equal = CFEqual;
-      context.hash = CFHash;
-      context.schedule = __CFFDScheduleCallback;
-      context.cancel = __CFFDCancelCallback;
-      context.perform = __CFFDPerformCallback;
-
-      f->_source0 = CFRunLoopSourceCreate(allocator, order, &context);
-      CFRetain(f->_source0);
-      result = f->_source0;
-    }
-
-    __CFUnlock(&f->_lock);
-  } else {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptorCreateRunLoopSource: CFFileDescriptorRef is invalid"));
-  }
-
-  return result;
-}
 
 #endif  // __HAS_DISPATCH__

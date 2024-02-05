@@ -26,9 +26,9 @@ typedef void (*CFFileDescriptorCallBack)(CFFileDescriptorRef f, CFOptionFlags ca
 typedef struct {
   CFIndex version;
   void *info;
-  void *(*retain)(void *info);
-  void (*release)(void *info);
-  CFStringRef (*copyDescription)(void *info);
+  const void *(*retain)(const void *info);
+  void (*release)(const void *info);
+  CFStringRef (*copyDescription)(const void *info);
 } CFFileDescriptorContext;
 
 CF_EXPORT CFTypeID CFFileDescriptorGetTypeID(void);
