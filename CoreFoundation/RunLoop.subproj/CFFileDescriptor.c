@@ -13,6 +13,8 @@
 
 #if __HAS_DISPATCH__
 
+#pragma mark - Types
+
 typedef OSSpinLock CFSpinLock_t;
 
 typedef struct __CFFileDescriptor {
@@ -45,6 +47,8 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
 {
   dispatch_source_t source;
 
+  CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
+
   if (callBackType == kCFFileDescriptorReadCallBack && !f->_read_source) {
     source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, f->_fd, 0, dispatch_get_current_queue());
   } else if (callBackType == kCFFileDescriptorWriteCallBack && !f->_write_source) {
@@ -73,7 +77,10 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
   return source;
 }
 
-void __CFFDSuspendSource(CFFileDescriptorRef f, CFOptionFlags callBackType) {
+void __CFFDSuspendSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
+{
+  // CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor->__CFFDSuspendSource(%i)"), f->_fd);
+
   if (callBackType == kCFFileDescriptorReadCallBack && f->_read_source && f->_read_source_suspended == FALSE) {
     dispatch_suspend(f->_read_source);
     f->_read_source_suspended = TRUE;
@@ -109,7 +116,7 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
   }
 }
 
-// enable dispatch source callbacks on either lazy port creation or CFFileDescriptorEnableCallBacks()
+// Enable dispatch source callbacks on either lazy port creation or CFFileDescriptorEnableCallBacks()
 // callBackTypes are the types just enabled, or both if called from the port creation function
 void __CFFDEnableSources(CFFileDescriptorRef f, CFOptionFlags callBackTypes)
 {
@@ -133,12 +140,11 @@ static void __CFFDScheduleCallback(void *info, CFRunLoopRef rl, CFStringRef mode
   __CFFileDescriptor *_info = info;
 
   if (info && rl) {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: %li)."), (long)rl);
+    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: 0x%0lx)."), (long)rl);
     _info->_runLoop = rl;
   }
 }
 
-// TODO
 // A cancel callback for the run loop source. This callback is called when the source is
 // removed from a run loop mode. Can be NULL.
 static void __CFFDCancelCallback(void *info, CFRunLoopRef rl, CFStringRef mode)
@@ -147,7 +153,6 @@ static void __CFFDCancelCallback(void *info, CFRunLoopRef rl, CFStringRef mode)
 
   CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor CANCEL callback invoked."));
   if (info != NULL) {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor CANCEL callback: set _runLoop to NULL"));
     _info->_runLoop = NULL;
   }
 }
@@ -323,7 +328,9 @@ void CFFileDescriptorEnableCallBacks(CFFileDescriptorRef f, CFOptionFlags callBa
     return;
   }
 
-  __CFLock(&f->_lock);
+  // CFLog(kCFLogLevelWarning, CFSTR("CoreFoundation: CFFileDescriptorEnableCallBacks for FD: %i"), f->_fd);
+  
+ __CFLock(&f->_lock);
 
   if (callBackTypes & kCFFileDescriptorReadCallBack) {
     /* CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor enabled READ callback.")); */
@@ -351,14 +358,16 @@ void CFFileDescriptorDisableCallBacks(CFFileDescriptorRef f, CFOptionFlags callB
     return;
   }
 
+  // CFLog(kCFLogLevelWarning, CFSTR("CoreFoundation: CFFileDescriptorDisableCallBacks for FD: %i"), f->_fd);
+
   __CFLock(&f->_lock);
 
   if (callBackTypes & kCFFileDescriptorReadCallBack && f->_read_source) {
-    __CFFDRemoveSource(f, kCFFileDescriptorReadCallBack);
+    __CFFDSuspendSource(f, kCFFileDescriptorReadCallBack);
   }
 
   if (callBackTypes & kCFFileDescriptorWriteCallBack && f->_write_source) {
-    __CFFDRemoveSource(f, kCFFileDescriptorWriteCallBack);
+    __CFFDSuspendSource(f, kCFFileDescriptorWriteCallBack);
   }
 
   __CFUnlock(&f->_lock);
