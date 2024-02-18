@@ -522,6 +522,10 @@ typedef unsigned long CFHashCode;
 typedef signed long CFIndex;
 #endif
 
+#ifndef __OBJC__
+typedef void* id;
+#endif
+
 /* Base "type" of all "CF objects", and polymorphic functions on them */
 typedef const CF_BRIDGED_TYPE(id) void * CFTypeRef;
 
