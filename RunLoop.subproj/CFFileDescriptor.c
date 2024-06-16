@@ -47,7 +47,7 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
 {
   dispatch_source_t source;
 
-  CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
+  // CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
 
   if (callBackType == kCFFileDescriptorReadCallBack && !f->_read_source) {
     source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, f->_fd, 0, dispatch_get_current_queue());
@@ -140,7 +140,7 @@ static void __CFFDScheduleCallback(void *info, CFRunLoopRef rl, CFStringRef mode
   __CFFileDescriptor *_info = info;
 
   if (info && rl) {
-    CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: 0x%0lx)."), (long)rl);
+    // CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor SCHEDULE callback invoked (runloop: 0x%0lx)."), (long)rl);
     _info->_runLoop = rl;
   }
 }
@@ -151,7 +151,7 @@ static void __CFFDCancelCallback(void *info, CFRunLoopRef rl, CFStringRef mode)
 {
   __CFFileDescriptor *_info = info;
 
-  CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor CANCEL callback invoked."));
+  // CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor CANCEL callback invoked."));
   if (info != NULL) {
     _info->_runLoop = NULL;
   }
@@ -203,7 +203,7 @@ const CFRuntimeClass __CFFileDescriptorClass = {
 __private_extern__ void __CFFileDescriptorInitialize(void)
 {
   __kCFFileDescriptorTypeID = _CFRuntimeRegisterClass(&__CFFileDescriptorClass);
-  CFLog(kCFLogLevelDebug, CFSTR("*** CFileDescriptiorInitialize: ID == %i."), __kCFFileDescriptorTypeID);
+  // CFLog(kCFLogLevelDebug, CFSTR("*** CFileDescriptiorInitialize: ID == %i."), __kCFFileDescriptorTypeID);
 }
 
 // use the base reserved bits for storage (like CFMachPort does)
