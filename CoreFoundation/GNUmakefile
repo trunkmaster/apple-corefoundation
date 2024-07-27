@@ -115,4 +115,7 @@ libCoreFoundation_LDFLAGS += $(shell pkg-config --libs-only-other icu-uc icu-io)
 libCoreFoundation_INCLUDE_DIRS += $(shell pkg-config --cflags-only-I icu-uc icu-io)
 libCoreFoundation_OBJCFLAGS += $(shell pkg-config --cflags-only-other icu-uc icu-io)
 
+# Set up libuuid
+libCoreFoundation_LIBRARIES_DEPEND_UPON += -luuid
+
 include $(GNUSTEP_MAKEFILES)/library.make

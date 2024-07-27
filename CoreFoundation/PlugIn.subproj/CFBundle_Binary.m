@@ -29,11 +29,11 @@
 
 #if BINARY_SUPPORT_DLFCN
 // To get some functionality, some macros must be defined.
-#define _GNU_SOURCE
-#define __USE_GNU
+// #define _GNU_SOURCE
+// #define __USE_GNU
 #include <dlfcn.h>
-#undef _GNU_SOURCE
-#undef __USE_GNU
+// #undef _GNU_SOURCE
+// #undef __USE_GNU
 #ifndef RTLD_FIRST
 #define RTLD_FIRST 0
 #endif

@@ -7,7 +7,6 @@
 	See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 	Responsibility: Michael LeHew
 */
-
 #include <CoreFoundation/CFRunLoop.h>
 #include <CoreFoundation/CFSet.h>
 #include <CoreFoundation/CFBag.h>
@@ -98,13 +97,13 @@ DISPATCH_EXPORT void _dispatch_main_queue_callback_4CF(void * _Null_unspecified)
 #elif TARGET_OS_LINUX
 
 // To get some functionality, some macros must be defined.
-#define _GNU_SOURCE
-#define __USE_GNU
+// #define _GNU_SOURCE
+// #define __USE_GNU
 #include <dlfcn.h>
-#undef _GNU_SOURCE
-#undef __USE_GNU
-
 #include <poll.h>
+// #undef _GNU_SOURCE
+// #undef __USE_GNU
+
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 #include <sys/timerfd.h>

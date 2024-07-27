@@ -17,3 +17,4 @@
 * [x] Set `kCFCoreFoundationVersionNumber` to 1690
   * [ ] Write a test case for this
 * [ ] Write a test suite
+* [ ] Get the CoreBase tests to pass
