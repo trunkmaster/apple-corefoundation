@@ -4,3 +4,4 @@ obj
 config.*
 *.tmp
 CF*/GNUmakefile
+*.minlog
