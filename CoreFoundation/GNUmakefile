@@ -33,6 +33,7 @@ libCoreFoundation_OBJC_FILES += \
 	\
 	NumberDate.subproj/CFBigNumber.m NumberDate.subproj/CFDate.m \
 	NumberDate.subproj/CFNumber.m NumberDate.subproj/CFTimeZone.m \
+	NumberDate.subproj/NSCFNumber.m NumberDate.subproj/_NSCFNumber.m \
 	\
 	Parsing.subproj/CFBinaryPList.m Parsing.subproj/CFOldStylePList.m \
 	Parsing.subproj/CFPropertyList.m Parsing.subproj/CFXMLInterface.m \
@@ -95,7 +96,7 @@ libCoreFoundation_HEADER_FILES = CFArray.h CFAsmMacros.h CFAttributedString.h \
 	CoreFoundation_Prefix.h ForFoundationOnly.h ForSwiftFoundationOnly.h GSCFInternal.h \
 	TargetConditionals.h BridgeHelpers.h \
 	\
-	NSCFLocale.h NSCFString.h NSCFType.h NSCFDictionary.h NSCFArray.h
+	NSCFLocale.h NSCFString.h NSCFType.h NSCFDictionary.h NSCFArray.h NSCFNumber.h _NSCFNumber.h
 
 libCoreFoundation_INCLUDE_DIRS += -I./Headers
 libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function -DBINARY_SUPPORT_DLFCN -Wno-error=int-conversion -Wno-error=incompatible-function-pointer-types -D_GNU_SOURCE
