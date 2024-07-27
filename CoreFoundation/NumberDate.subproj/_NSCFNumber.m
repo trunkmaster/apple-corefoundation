@@ -34,41 +34,10 @@ enum { kCFNumberSInt128Type = 17 };
 
 #pragma region _NSCFNumber
 
-@implementation _NSCFNumberSuperclassAnchor
-@end
-
 @implementation _NSCFNumber
 
-- (id)retain {
-    CFRetain((CFNumberRef)(self));
-    return self;
-}
-
-- (oneway void)release {
-    CFRelease((CFNumberRef)(self));
-}
-
-- (id)autorelease {
-    return (id)(CFAutorelease((CFNumberRef)(self)));
-}
-
-- (NSUInteger)retainCount {
-    return CFGetRetainCount((CFNumberRef)(self));
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
-- (void)dealloc {
-    /* No-op for bridged classes. This is because the CF system is responsible for the allocation and dealloc of the backing memory. */
-    /* This is all handled via the CFRelease calls. */
-    /* When its CF ref count drops to 0 the CF version of dealloc is invoked */
-    /* so by the time the NSObject dealloc is called, there is nothing left to do. */
-}
-
-+ (instancetype)allocWithZone:(NSZone*)zone {
-    return nil;
-}
-#pragma clang diagnostic pop
+BRIDGED_CLASS_REQUIRED_IMPLS(CFNumberRef, _kCFRuntimeIDCFNumber, NSNumber, _NSCFNumber)
+BRIDGED_CLASS_FOR_CODER(NSNumber)
 
 - (void)getValue:(void*)dest {
     CFNumberRef cfSelf = (CFNumberRef)(self);
@@ -182,37 +151,8 @@ enum { kCFNumberSInt128Type = 17 };
 
 @implementation _NSCFBoolean
 
-- (id)retain {
-    CFRetain((CFBooleanRef)(self));
-    return self;
-}
-
-- (oneway void)release {
-    CFRelease((CFBooleanRef)(self));
-}
-
-- (id)autorelease {
-    return (id)(CFAutorelease((CFBooleanRef)(self)));
-}
-
-- (NSUInteger)retainCount {
-    return CFGetRetainCount((CFBooleanRef)(self));
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
-- (void)dealloc {
-    /* No-op for bridged classes. This is because the CF system is responsible for the allocation and dealloc of the backing memory. */
-    /* This is all handled via the CFRelease calls. */
-    /* When its CF ref count drops to 0 the CF version of dealloc is invoked */
-    /* so by the time the NSObject dealloc is called, there is nothing left to do. */
-}
-
-+ (instancetype)allocWithZone:(NSZone*)zone {
-    return nil;
-}
-
-#pragma clang diagnostic pop
+BRIDGED_CLASS_REQUIRED_IMPLS(CFBooleanRef, _kCFRuntimeIDCFBoolean, NSNumber, _NSCFBoolean)
+BRIDGED_CLASS_FOR_CODER(NSNumber)
 
 - (void)getValue:(void*)dest {
     *(BOOL*)dest = [self boolValue];

@@ -15,6 +15,7 @@
 //******************************************************************************
 #pragma once
 #include <Foundation/NSValue.h>
+#include "NSCFNumber.h"
 // #include "_NSCFTemporaryRootObject.h"
 
 #pragma region _NSCFNumber
@@ -23,7 +24,7 @@
 // @interface _NSCFNumberSuperclassAnchor : _NSCFTemporaryRootObject
 // @end
 
-@interface _NSCFNumber : NSNumber
+@interface _NSCFNumber : NSNumberPrototype
 
 - (_Nonnull instancetype)retain;
 - (oneway void)release;
@@ -60,7 +61,7 @@
 #pragma region _NSCFBoolean
 
 // Subclass for bools only
-@interface _NSCFBoolean : NSNumber
+@interface _NSCFBoolean : NSNumberPrototype
 
 - (_Nonnull instancetype)retain;
 - (oneway void)release;
