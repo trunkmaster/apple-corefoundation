@@ -3,3 +3,4 @@ obj
 *.sum
 config.*
 *.tmp
+CF*/GNUmakefile
