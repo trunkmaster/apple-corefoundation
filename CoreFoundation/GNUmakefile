@@ -98,7 +98,7 @@ libCoreFoundation_HEADER_FILES = CFArray.h CFAsmMacros.h CFAttributedString.h \
 	NSCFLocale.h NSCFString.h NSCFType.h NSCFDictionary.h NSCFArray.h
 
 libCoreFoundation_INCLUDE_DIRS += -I./Headers
-libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function -DBINARY_SUPPORT_DLFCN
+libCoreFoundation_OBJCFLAGS	+= -DCF_BUILDING_CF -DINCLUDE_OBJC -Wno-unused-function -DBINARY_SUPPORT_DLFCN -Wno-error=int-conversion -Wno-error=incompatible-function-pointer-types -D_GNU_SOURCE
 
 # Set up libdispatch
 libCoreFoundation_OBJCFLAGS	+= -D__HAS_DISPATCH__
@@ -114,6 +114,5 @@ libCoreFoundation_LIB_DIRS += $(shell pkg-config --libs-only-L icu-uc icu-io)
 libCoreFoundation_LDFLAGS += $(shell pkg-config --libs-only-other icu-uc icu-io)
 libCoreFoundation_INCLUDE_DIRS += $(shell pkg-config --cflags-only-I icu-uc icu-io)
 libCoreFoundation_OBJCFLAGS += $(shell pkg-config --cflags-only-other icu-uc icu-io)
-
 
 include $(GNUSTEP_MAKEFILES)/library.make
