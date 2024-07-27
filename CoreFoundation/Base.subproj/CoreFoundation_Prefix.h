@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #if TARGET_OS_WIN32 && defined(__cplusplus)
@@ -66,8 +67,15 @@ typedef char * Class;
 #endif
 #endif
 
-#define CRSetCrashLogMessage(A) do {} while (0)
-#define CRSetCrashLogMessage2(A) do {} while (0)
+// #define CRSetCrashLogMessage(A) do {} while (0)
+// #define CRSetCrashLogMessage2(A) do {} while (0)
+CF_INLINE void CRSetCrashLogMessage(char* A) {
+    fprintf(stderr, "%s", A);
+}
+
+CF_INLINE void CRSetCrashLogMessage2(char* A) {
+    fprintf(stderr, "%s", A);
+}
 
 #if TARGET_OS_MAC
 #include <libkern/OSAtomic.h>
