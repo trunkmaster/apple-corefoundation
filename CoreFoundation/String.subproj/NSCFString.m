@@ -375,10 +375,12 @@ BRIDGED_MUTABLE_CLASS_FOR_CODER(CFStringRef, __CFStrIsMutable, NSString, NSMutab
     return NO;
 }
 - (const char*) _fastCStringContents: (BOOL) requiresNullTermination {
-    return NULL;
+    return [self cString];
 }
 - (const unichar*) _fastCharacterContents {
-    return NULL;
+    unichar* retval = malloc([self length]*sizeof(unichar));
+    [self getCharacters: retval];
+    return retval;
 }
 - (BOOL) _getCString: (char*)buffer 
            maxLength: (NSUInteger)maxLength 
