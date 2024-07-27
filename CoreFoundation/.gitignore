@@ -3,3 +3,4 @@ obj
 .cache
 compile_commands.json
 **.bundle
+CoreFoundation

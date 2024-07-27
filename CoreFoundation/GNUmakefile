@@ -119,4 +119,9 @@ libCoreFoundation_OBJCFLAGS += $(shell pkg-config --cflags-only-other icu-uc icu
 # Set up libuuid
 libCoreFoundation_LIBRARIES_DEPEND_UPON += -luuid
 
+# Set up CoreFoundation resources
+libCoreFoundation_HAS_RESOURCE_BUNDLE = yes
+libCoreFoundation_RESOURCE_FILES = CFCharacterSetBitmaps.bitmap CFUniCharPropertyDatabase.data CFUnicodeData-B.mapping CFUnicodeData-L.mapping
+libCoreFoundation_RESOURCE_FILES_DIR = CharacterSets
+
 include $(GNUSTEP_MAKEFILES)/library.make

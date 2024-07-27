@@ -35,7 +35,12 @@ extern void _CFGetFrameworkPath(wchar_t *path, int maxLength);
 #if TARGET_OS_MAC
 #define __kCFCharacterSetDir "/System/Library/CoreServices"
 #elif TARGET_OS_LINUX || TARGET_OS_BSD
+#if DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
+// TODO:GNUSTEP: We should load this from [NSBundle +bundleForLibrary:version:] instead.
+#define __kCFCharacterSetDir "/usr/GNUstep/Local/Library/Libraries/CoreFoundation/Versions/0/Resources"
+#else
 #define __kCFCharacterSetDir "/usr/local/share/CoreFoundation"
+#endif // DEPLOYMENT_RUNTIME_GNUSTEP_LIBOBJC2
 #elif TARGET_OS_WIN32
 #define __kCFCharacterSetDir "\\Windows\\CoreFoundation"
 #endif
