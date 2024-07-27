@@ -18,10 +18,10 @@ void refcounting_tests(void)
   CFStringRef str2;
   
   str = (NSString*)CFSTR("test");
-  PASS_CF ([str retainCount] == UINT_MAX,
+  PASS_CF ([str retainCount] >= UINT_MAX,
     "Constant string has maximum retain count.");
   [str release];
-  PASS_CF ([str retainCount] == UINT_MAX,
+  PASS_CF ([str retainCount] >= UINT_MAX,
     "Release has no effect of constant string.");
   
   str2 = CFStringCreateWithBytes (NULL, "Test2", 6, kCFStringEncodingASCII, 0);
