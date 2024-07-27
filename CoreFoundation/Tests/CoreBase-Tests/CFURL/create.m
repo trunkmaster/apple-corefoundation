@@ -87,14 +87,18 @@ int main (void)
   
   url = CFURLCreateWithString (NULL,
     CFSTR("http://www.w3.org/silly;type=test"), NULL);
-  str = CFURLCopyParameterString (url, NULL);
-  PASS_CFEQ(str, CFSTR("type=test"), "Parameter string for "
-    "http://www.w3.org/silly;type=test");
-  CFRelease(str);
+  // "CFURLCopyParameterString is deprecated and now always returns NULL. The path component now includes the part of the URL string which CFURLCopyParameterString used to return."
+  // str = CFURLCopyParameterString (url, NULL);
+  // PASS_CFEQ(str, CFSTR("type=test"), "Parameter string for "
+  //   "http://www.w3.org/silly;type=test");
+  // CFRelease(str);
   str = CFURLCopyResourceSpecifier (url);
+  PASS_CF(str != NULL, "Resource specifier of http://www.w3.org/silly;type=test is not null.");
+  if(str) {
   PASS_CFEQ(str, CFSTR(";type=test"),
             "Resource specifier of http://www.w3.org/silly;type=test is ;test=test.");
   CFRelease(str);
+  }
   
   CFRelease(url);
   
