@@ -47,7 +47,7 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
 {
   dispatch_source_t source;
 
-  // CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
+  CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
 
   if (callBackType == kCFFileDescriptorReadCallBack && !f->_read_source) {
     source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, f->_fd, 0, dispatch_get_current_queue());
@@ -81,11 +81,11 @@ void __CFFDSuspendSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
 {
   // CFLog(kCFLogLevelError, CFSTR("CFFileDescriptor->__CFFDSuspendSource(%i)"), f->_fd);
 
-  if (callBackType == kCFFileDescriptorReadCallBack && f->_read_source && f->_read_source_suspended == FALSE) {
+  if (callBackType & kCFFileDescriptorReadCallBack && f->_read_source && f->_read_source_suspended == FALSE) {
     dispatch_suspend(f->_read_source);
     f->_read_source_suspended = TRUE;
   }
-  if (callBackType == kCFFileDescriptorWriteCallBack && f->_write_source && f->_write_source_suspended == FALSE) {
+  if (callBackType & kCFFileDescriptorWriteCallBack && f->_write_source && f->_write_source_suspended == FALSE) {
     dispatch_suspend(f->_write_source);
     f->_write_source_suspended = TRUE;
   }
@@ -94,7 +94,7 @@ void __CFFDSuspendSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
 // callBackType will be one of Read and Write
 void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
 {
-  if (callBackType == kCFFileDescriptorReadCallBack && f->_read_source) {
+  if (callBackType & kCFFileDescriptorReadCallBack && f->_read_source) {
     // Suspended runloop source can't be released so resume
     if (f->_read_source_suspended != FALSE) {
       dispatch_resume(f->_read_source);
@@ -104,7 +104,7 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
     dispatch_release(f->_read_source);
     f->_read_source = NULL;
   }
-  if (callBackType == kCFFileDescriptorWriteCallBack && f->_write_source) {
+  if (callBackType & kCFFileDescriptorWriteCallBack && f->_write_source) {
     // Suspended runloop source can't be released so resume
     if (f->_write_source_suspended != FALSE) {
       dispatch_resume(f->_write_source);
@@ -121,12 +121,18 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
 void __CFFDEnableSources(CFFileDescriptorRef f, CFOptionFlags callBackTypes)
 {
   if (callBackTypes & kCFFileDescriptorReadCallBack && f->_read_source && f->_read_source_suspended != FALSE) {
+    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - READ"), f->_fd);
     dispatch_resume(f->_read_source);
     f->_read_source_suspended = FALSE;
+  } else {
+    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - NOT READ"), f->_fd);
   }
   if (callBackTypes & kCFFileDescriptorWriteCallBack && f->_write_source && f->_write_source_suspended != FALSE) {
+    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - WRITE"), f->_fd);
     dispatch_resume(f->_write_source);
     f->_write_source_suspended = FALSE;
+  } else {
+    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - NOT WRITE"), f->_fd);
   }
 }
 

@@ -430,9 +430,15 @@ CF_PRIVATE const CFStringRef _kCFBundleUseAppleLocalizationsKey;
 static bool _CFGetPathFromFileDescriptor(int fd, char *path);
 
 #if TARGET_OS_MAC || (TARGET_OS_BSD && !defined(__OpenBSD__))
-
+#include <sys/user.h>
 static bool _CFGetPathFromFileDescriptor(int fd, char *path) {
-    return fcntl(fd, F_GETPATH, path) != -1;
+    struct kinfo_file kif;
+    int error = fcntl(fd, F_KINFO, &kif);
+
+    if (error == 0)
+        strcpy(path, kif.kf_path);
+
+    return error;
 }
 
 #elif TARGET_OS_LINUX

@@ -1,7 +1,7 @@
 cmake .. \
 	-DCMAKE_C_COMPILER=clang \
 	-DCMAKE_C_FLAGS="-I/usr/NextSpace/include" \
-        -DCMAKE_SHARED_LINKER_FLAGS="-L/usr/NextSpace/lib -luuid" \
+        -DCMAKE_SHARED_LINKER_FLAGS="-L/usr/local/lib -L/usr/NextSpace/lib -luuid" \
         -DCF_DEPLOYMENT_SWIFT=NO \
         -DBUILD_SHARED_LIBS=YES \
         -DCMAKE_INSTALL_PREFIX=/usr/NextSpace \

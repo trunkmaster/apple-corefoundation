@@ -7,7 +7,7 @@
 
 #include <CoreFoundation/CFRunLoop.h>
 
-#if TARGET_OS_OSX || TARGET_OS_LINUX
+#if TARGET_OS_OSX || TARGET_OS_LINUX || TARGET_OS_BSD
 
 CF_EXTERN_C_BEGIN
 
