@@ -1,489 +1,253 @@
-# export compile options for langd with command:
-# $ cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+##===----------------------------------------------------------------------===##
+##
+## This source file is part of the Swift open source project
+##
+## Copyright (c) 2024 Apple Inc. and the Swift project authors
+## Licensed under Apache License v2.0
+##
+## See LICENSE.txt for license information
+## See CONTRIBUTORS.md for the list of Swift project authors
+##
+## SPDX-License-Identifier: Apache-2.0
+##
+##===----------------------------------------------------------------------===##
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.24)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
-project(CoreFoundation
-  VERSION 5.9.2
-  LANGUAGES ASM C)
-
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED YES)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# TODO(compnerd): this should be re-enabled once CoreFoundation annotations have
-# been reconciled.  Hidden visibility should ensure that internal interfaces are
-# not accidentally exposed on platforms without exports lists and explicit
-# annotations (i.e. ELFish and MachO targets).
-if(0)
-set(CMAKE_C_VISIBILITY_PRESET hidden)
-set(CMAKE_C_VISIBILITY_INLINES_HIDDEN ON)
+if(POLICY CMP0156)
+    # Deduplicate linked libraries where appropriate
+    cmake_policy(SET CMP0156 NEW)
 endif()
+
+if(POLICY CMP0157)
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL Windows AND CMAKE_SYSTEM_NAME STREQUAL Android)
+        # CMP0157 causes swift-collections to fail to compile when targetting
+        # Android on Windows due to swift-driver not being present during the
+        # toolchain build. Disable it for now.
+        cmake_policy(SET CMP0157 OLD)
+    else()
+        # New Swift build model: improved incremental build performance and LSP support
+        cmake_policy(SET CMP0157 NEW)
+    endif()
+endif()
+
+if (NOT DEFINED CMAKE_C_COMPILER)
+    set(CMAKE_C_COMPILER clang)
+endif()
+
+project(Foundation
+    LANGUAGES C Swift)
+
+option(FOUNDATION_SWIFTPM_DEPS "build Windows SwiftPM dependencies via CMake" NO)
+if(FOUNDATION_SWIFTPM_DEPS)
+    include(WindowsSwiftPMDependencies)
+    _foundation_setup_windows_swiftpm_dependencies_target()
+    return()
+endif()
+
+if(NOT SWIFT_SYSTEM_NAME)
+  if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+    set(SWIFT_SYSTEM_NAME macosx)
+  else()
+    set(SWIFT_SYSTEM_NAME "$<LOWER_CASE:${CMAKE_SYSTEM_NAME}>")
+  endif()
+endif()
+
+# Don't enable WMO on Windows due to linker failures
+if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL Windows)
+    # Enable whole module optimization for release builds & incremental for debug builds
+    if(POLICY CMP0157)
+        set(CMAKE_Swift_COMPILATION_MODE "$<IF:$<CONFIG:Release>,wholemodule,incremental>")
+    else()
+        add_compile_options($<$<AND:$<COMPILE_LANGUAGE:Swift>,$<CONFIG:Release>>:-wmo>)
+    endif()
+endif()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift)
+
+option(BUILD_SHARED_LIBS "build shared libraries" ON)
+option(BUILD_FULLY_STATIC "build fully static" NO)
+
+# Optionally build tools (on by default) but only when building shared libraries
+if(BUILD_SHARED_LIBS)
+    option(FOUNDATION_BUILD_TOOLS "build tools" ON)
+endif()
+
+set(FOUNDATION_BUILD_NETWORKING_default ON)
+if(CMAKE_SYSTEM_NAME STREQUAL "WASI")
+    # Networking is not supported on WASI
+    set(FOUNDATION_BUILD_NETWORKING_default OFF)
+endif()
+option(FOUNDATION_BUILD_NETWORKING "build FoundationNetworking"
+    ${FOUNDATION_BUILD_NETWORKING_default})
 
 set(CMAKE_POSITION_INDEPENDENT_CODE YES)
 
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG OFF)
-find_package(Threads REQUIRED)
+# Fetchable dependencies
+include(FetchContent)
+if (_SwiftFoundationICU_SourceDIR)
+    FetchContent_Declare(SwiftFoundationICU
+        SOURCE_DIR ${_SwiftFoundationICU_SourceDIR})
+else()
+    FetchContent_Declare(SwiftFoundationICU
+        GIT_REPOSITORY https://github.com/apple/swift-foundation-icu.git
+        GIT_TAG 0.0.9)
+endif()
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  find_package(LibXml2 REQUIRED)
-  find_package(ICU COMPONENTS uc i18n REQUIRED OPTIONAL_COMPONENTS data)
-  find_package(CURL CONFIG)
-  if(CURL_FOUND)
-    set(CURL_VERSION_STRING ${CURL_VERSION})
-  else()
+if (_SwiftFoundation_SourceDIR)
+    FetchContent_Declare(SwiftFoundation
+        SOURCE_DIR ${_SwiftFoundation_SourceDIR})
+else()
+    FetchContent_Declare(SwiftFoundation
+        GIT_REPOSITORY https://github.com/apple/swift-foundation.git
+        GIT_TAG main)
+endif()
+FetchContent_MakeAvailable(SwiftFoundationICU SwiftFoundation)
+
+include(CheckLinkerFlag)
+include(CheckSymbolExists)
+
+check_linker_flag(C "LINKER:--build-id=sha1" LINKER_SUPPORTS_BUILD_ID)
+
+# Detect if the system libc defines symbols for these functions.
+# If it is not available, swift-corelibs-foundation has its own implementations
+# that will be used. If it is available, it should not redefine them.
+# Note: SwiftPM does not have the ability to introspect the contents of the SDK
+#       and therefore will always include these functions in the build and will
+#       cause build failures on platforms that define these functions.
+check_symbol_exists("strlcat" "string.h" HAVE_STRLCAT)
+check_symbol_exists("strlcpy" "string.h" HAVE_STRLCPY)
+check_symbol_exists("issetugid" "unistd.h" HAVE_ISSETUGID)
+add_compile_definitions(
+  $<$<AND:$<COMPILE_LANGUAGE:C>,$<BOOL:${HAVE_STRLCAT}>>:HAVE_STRLCAT>
+  $<$<AND:$<COMPILE_LANGUAGE:C>,$<BOOL:${HAVE_STRLCPY}>>:HAVE_STRLCPY>
+  $<$<AND:$<COMPILE_LANGUAGE:C>,$<BOOL:${HAVE_ISSETUGID}>>:HAVE_ISSETUGID>)
+
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
+  check_symbol_exists(sched_getaffinity "sched.h" HAVE_SCHED_GETAFFINITY)
+  add_compile_definitions($<$<COMPILE_LANGUAGE:C>:HAVE_SCHED_GETAFFINITY>)
+
+  # Pass -fno-omit-frame-pointer while compiling for better backtraces
+  add_compile_options(
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fno-omit-frame-pointer>"
+    "$<$<COMPILE_LANGUAGE:C,CXX>:-fno-omit-frame-pointer>")
+endif()
+
+# Precompute module triple for installation
+if(NOT SwiftFoundation_MODULE_TRIPLE)
+    set(module_triple_command "${CMAKE_Swift_COMPILER}" -print-target-info)
+    if(CMAKE_Swift_COMPILER_TARGET)
+        list(APPEND module_triple_command -target ${CMAKE_Swift_COMPILER_TARGET})
+    endif()
+    execute_process(COMMAND ${module_triple_command} OUTPUT_VARIABLE target_info_json)
+    string(JSON module_triple GET "${target_info_json}" "target" "moduleTriple")
+    set(SwiftFoundation_MODULE_TRIPLE "${module_triple}" CACHE STRING "swift module triple used for installed swiftmodule and swiftinterface files")
+    mark_as_advanced(SwiftFoundation_MODULE_TRIPLE)
+endif()
+
+# System dependencies
+
+# We know libdispatch is always unavailable on WASI
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "WASI")
+    find_package(LibRT)
+    find_package(dispatch CONFIG)
+    if(NOT dispatch_FOUND)
+        if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+            set(DEFAULT_DISPATCH_INCLUDE_PATH "/usr/lib/swift")
+        elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+            set(DEFAULT_DISPATCH_INCLUDE_PATH "$ENV{SDKROOT}usr/include")
+        endif()
+        set(DISPATCH_INCLUDE_PATH "${DEFAULT_DISPATCH_INCLUDE_PATH}" CACHE STRING "A path to where you can find libdispatch headers")
+        message("-- dispatch_DIR not found, using dispatch from SDK at ${DISPATCH_INCLUDE_PATH}")
+        list(APPEND _Foundation_common_build_flags
+            "-I${DISPATCH_INCLUDE_PATH}"
+            "-I${DISPATCH_INCLUDE_PATH}/Block")
+    endif()
+endif()
+if(ANDROID)
+  # LibXml2 looks for the Threads package, so
+  # ensure that it doesn't try to use the `-pthread`
+  # flag on Android.
+  set(CMAKE_HAVE_LIBC_PTHREAD YES)
+endif()
+find_package(LibXml2 REQUIRED)
+if(FOUNDATION_BUILD_NETWORKING)
     find_package(CURL REQUIRED)
-  endif()
+endif()
+
+# Common build flags (_CFURLSessionInterface, _CFXMLInterface, CoreFoundation)
+list(APPEND _Foundation_common_build_flags
+    "-DDEPLOYMENT_RUNTIME_SWIFT"
+    "-DCF_BUILDING_CF"
+    "-DHAVE_STRUCT_TIMESPEC"
+    "-Wno-shorten-64-to-32"
+    "-Wno-deprecated-declarations"
+    "-Wno-unreachable-code"
+    "-Wno-conditional-uninitialized"
+    "-Wno-unused-variable"
+    "-Wno-unused-function"
+    "-Wno-microsoft-enum-forward-reference"
+    "-Wno-int-conversion"
+    "-Wno-switch"
+    "-fblocks")
+
+if(NOT "${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC")
+    list(APPEND _Foundation_common_build_flags
+        "-fconstant-cfstrings"
+        "-fdollars-in-identifiers"
+        "-fno-common"
+        "-fcf-runtime-abi=swift")
+
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL OpenBSD)
+        list(APPEND _Foundation_common_build_flags
+            "-fexceptions")
+    endif()
+else()
+    list(APPEND _Foundation_common_build_flags
+        "/EHsc"
+        "/clang:-fcf-runtime-abi=swift")
+endif()
+
+set(CMAKE_INSTALL_REMOVE_ENVIRONMENT_RPATH ON)
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+if(CMAKE_SYSTEM_NAME MATCHES "OpenBSD|DragonFlyBSD")
+    add_link_options("LINKER:-z,origin")
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+    list(APPEND _Foundation_common_build_flags
+        "-DDEBUG")
+endif()
+
+# Swift build flags (Foundation, FoundationNetworking, FoundationXML)
+set(_Foundation_swift_build_flags)
+list(APPEND _Foundation_swift_build_flags
+    "-swift-version 6"
+    "-DDEPLOYMENT_RUNTIME_SWIFT"
+    "-Xfrontend"
+    "-require-explicit-sendable")
+
+if(CMAKE_SYSTEM_NAME STREQUAL "WASI")
+    # Enable wasi-libc emulation features
+    set(WASI_EMULATION_DEFS _WASI_EMULATED_MMAN _WASI_EMULATED_SIGNAL _WASI_EMULATED_PROCESS_CLOCKS)
+    foreach(def ${WASI_EMULATION_DEFS})
+        list(APPEND _Foundation_swift_build_flags "SHELL:-Xcc -D${def}")
+        list(APPEND _Foundation_common_build_flags "-D${def}")
+    endforeach()
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+    list(APPEND _Foundation_common_build_flags
+        "-D_GNU_SOURCE")
 endif()
 
 include(GNUInstallDirs)
-include(CoreFoundationAddFramework)
+include(FoundationSwiftSupport)
 
-option(CF_DEPLOYMENT_SWIFT "Build for swift" NO)
-
-if("${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC")
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:/FI${PROJECT_SOURCE_DIR}/Base.subproj/CoreFoundation_Prefix.h>)
-else()
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:-include$<SEMICOLON>${PROJECT_SOURCE_DIR}/Base.subproj/CoreFoundation_Prefix.h>)
-endif()
-
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-fblocks>)
-
-if("${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC")
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:/EHsc>)
-else()
-  if(NOT CMAKE_SYSTEM_NAME STREQUAL OpenBSD)
-    add_compile_options($<$<COMPILE_LANGUAGE:C>:-fexceptions>)
-  endif()
-endif()
-
-if(NOT "${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC")
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:-fconstant-cfstrings>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:-fdollars-in-identifiers>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:-fno-common>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:-Werror=implicit-function-declaration>)
-endif()
-
-if(CF_DEPLOYMENT_SWIFT)
-  add_compile_options($<$<COMPILE_LANGUAGE:C>:$<$<STREQUAL:${CMAKE_C_SIMULATE_ID},MSVC>:/clang:>-fcf-runtime-abi=swift>)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL Linux OR CMAKE_SYSTEM_NAME STREQUAL Android)
-  add_compile_definitions($<$<COMPILE_LANGUAGE:C>:_GNU_SOURCE>)
-
-  if(CMAKE_SYSTEM_NAME STREQUAL Linux)
-    include(CheckSymbolExists)
-    include(CheckFunctionExists)
-    include(CheckIncludeFile)
-    list(APPEND CMAKE_REQUIRED_DEFINITIONS -D_GNU_SOURCE)
-    check_include_file("sched.h" HAVE_SCHED_H)
-    if(HAVE_SCHED_H)
-      check_symbol_exists(sched_getaffinity "sched.h" HAVE_SCHED_GETAFFINITY)
-      if(HAVE_SCHED_GETAFFINITY)
-        add_compile_definitions($<$<COMPILE_LANGUAGE:C>:HAVE_SCHED_GETAFFINITY>)
-      endif()
-    endif()
-    check_function_exists(strlcpy HAVE_STRLCPY)
-    check_function_exists(strlcat HAVE_STRLCAT)
-    if (HAVE_STRLCPY AND HAVE_STRLCAT)
-      add_compile_definitions($<$<COMPILE_LANGUAGE:C>:HAVE_BSD_STRING>)
-    endif()
-  endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  # NOTE(compnerd) we only support building with the dynamic CRT as using the
-  # static CRT causes problems for users of the library.
-  add_compile_definitions($<$<COMPILE_LANGUAGE:C>:_DLL>)
-  if(BUILD_SHARED_LIBS)
-    add_compile_definitions($<$<COMPILE_LANGUAGE:C>:_WINDLL)
-  endif()
-endif()
-
-add_compile_definitions($<$<COMPILE_LANGUAGE:C>:U_SHOW_DRAFT_API>)
-add_compile_definitions($<$<COMPILE_LANGUAGE:C>:CF_BUILDING_CF>)
-
-if(CF_DEPLOYMENT_SWIFT)
-  add_compile_definitions($<$<COMPILE_LANGUAGE:C>:DEPLOYMENT_RUNTIME_SWIFT>)
-else()
-  add_compile_definitions($<$<COMPILE_LANGUAGE:C>:DEPLOYMENT_RUNTIME_C>)
-endif()
-
-# TODO(compnerd) ensure that the compiler supports the warning flag
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-shorten-64-to-32>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-deprecated-declarations>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-unreachable-code>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-conditional-uninitialized>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-unused-variable>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-int-conversion>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-unused-function>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-microsoft-enum-forward-reference>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-implicit-const-int-float-conversion>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-switch>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-enum-conversion>)
-
-if(BUILD_SHARED_LIBS)
-  set(FRAMEWORK_LIBRARY_TYPE SHARED)
-else()
-  set(FRAMEWORK_LIBRARY_TYPE STATIC)
-endif()
-
-add_framework(CoreFoundation
-                ${FRAMEWORK_LIBRARY_TYPE}
-              FRAMEWORK_DIRECTORY
-                CoreFoundation_FRAMEWORK_DIRECTORY
-              MODULE_MAP
-                Base.subproj/module.modulemap
-              PRIVATE_HEADERS
-                # Base
-                Base.subproj/CFAsmMacros.h
-                Base.subproj/CFInternal.h
-                Base.subproj/CFKnownLocations.h
-                Base.subproj/CFLocking.h
-                Base.subproj/CFLogUtilities.h
-                Base.subproj/CFPriv.h
-                Base.subproj/CFOverflow.h
-                Base.subproj/CFRuntime.h
-                Base.subproj/CFRuntime_Internal.h
-                Base.subproj/ForFoundationOnly.h
-                Base.subproj/ForSwiftFoundationOnly.h
-                # Collections
-                Collections.subproj/CFBasicHash.h
-                Collections.subproj/CFStorage.h
-                Collections.subproj/CFCollections_Internal.h
-                # Error
-                Error.subproj/CFError_Private.h
-                # Locale
-                Locale.subproj/CFCalendar_Internal.h
-                Locale.subproj/CFDateComponents.h
-                Locale.subproj/CFDateFormatter_Private.h
-                Locale.subproj/CFDateIntervalFormatter.h
-                Locale.subproj/CFDateInterval.h
-                Locale.subproj/CFICULogging.h
-                Locale.subproj/CFListFormatter.h
-                Locale.subproj/CFLocaleInternal.h
-                Locale.subproj/CFLocale_Private.h
-                Locale.subproj/CFRelativeDateTimeFormatter.h
-                # NumberDate
-                NumberDate.subproj/CFBigNumber.h
-                NumberDate.subproj/CFNumber_Private.h
-                # Parsing
-                Parsing.subproj/CFPropertyList_Private.h
-                # PlugIn
-                PlugIn.subproj/CFBundlePriv.h
-                PlugIn.subproj/CFBundle_BinaryTypes.h
-                PlugIn.subproj/CFBundle_Internal.h
-                PlugIn.subproj/CFPlugIn_Factory.h
-                # RunLoop
-                RunLoop.subproj/CFMachPort_Internal.h
-                RunLoop.subproj/CFMachPort_Lifetime.h
-                # Stream
-                Stream.subproj/CFStreamAbstract.h
-                Stream.subproj/CFStreamInternal.h
-                Stream.subproj/CFStreamPriv.h
-                # String
-                String.subproj/CFAttributedStringPriv.h
-                String.subproj/CFBurstTrie.h
-                String.subproj/CFCharacterSetPriv.h
-                String.subproj/CFRegularExpression.h
-                String.subproj/CFRunArray.h
-                String.subproj/CFString_Internal.h
-                String.subproj/CFString_Private.h
-                String.subproj/CFStringDefaultEncoding.h
-                String.subproj/CFStringLocalizedFormattingInternal.h
-                # StringEncodings
-                StringEncodings.subproj/CFICUConverters.h
-                StringEncodings.subproj/CFStringEncodingConverter.h
-                StringEncodings.subproj/CFStringEncodingConverterExt.h
-                StringEncodings.subproj/CFStringEncodingConverterPriv.h
-                StringEncodings.subproj/CFStringEncodingDatabase.h
-                StringEncodings.subproj/CFUniChar.h
-                StringEncodings.subproj/CFUniCharPriv.h
-                StringEncodings.subproj/CFUnicodeDecomposition.h
-                StringEncodings.subproj/CFUnicodePrecomposition.h
-                # URL
-                URL.subproj/CFURL.inc.h
-                URL.subproj/CFURLPriv.h
-                URL.subproj/CFURLSessionInterface.h
-              PUBLIC_HEADERS
-                # FIXME: remove this in release build
-                Base.subproj/CFLogUtilities.h
-                Base.subproj/CoreFoundation.h
-                Base.subproj/SwiftRuntime/TargetConditionals.h
-
-                # AppServices
-                AppServices.subproj/CFNotificationCenter.h
-                AppServices.subproj/CFUserNotification.h
-                # Base
-                Base.subproj/CFAvailability.h
-                Base.subproj/CFBase.h
-                Base.subproj/CFByteOrder.h
-                Base.subproj/CFUUID.h
-                Base.subproj/CFUtilities.h
-                # Collections
-                Collections.subproj/CFArray.h
-                Collections.subproj/CFBag.h
-                Collections.subproj/CFBinaryHeap.h
-                Collections.subproj/CFBitVector.h
-                Collections.subproj/CFData.h
-                Collections.subproj/CFDictionary.h
-                Collections.subproj/CFSet.h
-                Collections.subproj/CFTree.h
-                # Error
-                Error.subproj/CFError.h
-                # Locale
-                Locale.subproj/CFCalendar.h
-                Locale.subproj/CFDateFormatter.h
-                Locale.subproj/CFLocale.h
-                Locale.subproj/CFNumberFormatter.h
-                # NumberDate
-                NumberDate.subproj/CFDate.h
-                NumberDate.subproj/CFNumber.h
-                NumberDate.subproj/CFTimeZone.h
-                # Parsing
-                Parsing.subproj/CFPropertyList.h
-                # PlugIn
-                PlugIn.subproj/CFBundle.h
-                PlugIn.subproj/CFPlugIn.h
-                PlugIn.subproj/CFPlugInCOM.h
-                # Preferences
-                Preferences.subproj/CFPreferences.h
-                # RunLoop
-                #RunLoop.subproj/CFMachPort.h
-                RunLoop.subproj/CFMessagePort.h
-                RunLoop.subproj/CFRunLoop.h
-                RunLoop.subproj/CFFileDescriptor.h
-                RunLoop.subproj/CFSocket.h
-                # Stream
-                Stream.subproj/CFStream.h
-                # String
-                String.subproj/CFAttributedString.h
-                String.subproj/CFCharacterSet.h
-                String.subproj/CFString.h
-                String.subproj/CFStringEncodingExt.h
-                # URL
-                URL.subproj/CFURL.h
-                URL.subproj/CFURLAccess.h
-                URL.subproj/CFURLComponents.h
-              SOURCES
-                # AppServices
-                AppServices.subproj/CFNotificationCenter.c
-                # Base
-                Base.subproj/CFBase.c
-                Base.subproj/CFFileUtilities.c
-                Base.subproj/CFKnownLocations.c
-                Base.subproj/CFPlatform.c
-                Base.subproj/CFRuntime.c
-                Base.subproj/CFSortFunctions.c
-                Base.subproj/CFSystemDirectories.c
-                Base.subproj/CFUtilities.c
-                Base.subproj/CFUUID.c
-                Base.subproj/CFWindowsUtilities.c
-                # Collections
-                Collections.subproj/CFArray.c
-                Collections.subproj/CFBag.c
-                Collections.subproj/CFBasicHash.c
-                Collections.subproj/CFBinaryHeap.c
-                Collections.subproj/CFBitVector.c
-                Collections.subproj/CFData.c
-                Collections.subproj/CFDictionary.c
-                Collections.subproj/CFSet.c
-                Collections.subproj/CFStorage.c
-                Collections.subproj/CFTree.c
-                # Error
-                Error.subproj/CFError.c
-                # Locale
-                Locale.subproj/CFCalendar.c
-                Locale.subproj/CFCalendar_Enumerate.c
-                Locale.subproj/CFDateComponents.c
-                Locale.subproj/CFDateFormatter.c
-                Locale.subproj/CFDateIntervalFormatter.c
-                Locale.subproj/CFDateInterval.c
-                Locale.subproj/CFListFormatter.c
-                Locale.subproj/CFLocale.c
-                Locale.subproj/CFLocaleIdentifier.c
-                Locale.subproj/CFLocaleKeys.c
-                Locale.subproj/CFNumberFormatter.c
-                Locale.subproj/CFRelativeDateTimeFormatter.c
-                # NumberData
-                NumberDate.subproj/CFBigNumber.c
-                NumberDate.subproj/CFDate.c
-                NumberDate.subproj/CFNumber.c
-                NumberDate.subproj/CFTimeZone.c
-                # Parsing
-                Parsing.subproj/CFBinaryPList.c
-                Parsing.subproj/CFOldStylePList.c
-                Parsing.subproj/CFPropertyList.c
-                # PlugIn
-                PlugIn.subproj/CFBundle_Binary.c
-                PlugIn.subproj/CFBundle.c
-                PlugIn.subproj/CFBundle_DebugStrings.c
-                PlugIn.subproj/CFBundle_Executable.c
-                PlugIn.subproj/CFBundle_Grok.c
-                PlugIn.subproj/CFBundle_InfoPlist.c
-                PlugIn.subproj/CFBundle_Locale.c
-                PlugIn.subproj/CFBundle_Main.c
-                PlugIn.subproj/CFBundle_ResourceFork.c
-                PlugIn.subproj/CFBundle_Resources.c
-                PlugIn.subproj/CFBundle_SplitFileName.c
-                PlugIn.subproj/CFBundle_Strings.c
-                PlugIn.subproj/CFBundle_Tables.c
-                PlugIn.subproj/CFPlugIn.c
-                # Preferences
-                Preferences.subproj/CFApplicationPreferences.c
-                Preferences.subproj/CFPreferences.c
-                Preferences.subproj/CFXMLPreferencesDomain.c
-                # RunLoop
-                # TODO(compnerd) make this empty on non-Mach targets
-                # RunLoop.subproj/CFMachPort.c
-                # RunLoop.subproj/CFMachPort_Lifetime.c
-                # RunLoop.subproj/CFMessagePort.c
-                RunLoop.subproj/CFRunLoop.c
-                RunLoop.subproj/CFFileDescriptor.c
-                RunLoop.subproj/CFSocket.c
-                # Stream
-                Stream.subproj/CFConcreteStreams.c
-                Stream.subproj/CFSocketStream.c
-                Stream.subproj/CFStream.c
-                # String
-                String.subproj/CFAttributedString.c
-                String.subproj/CFBurstTrie.c
-                String.subproj/CFCharacterSet.c
-                String.subproj/CFCharacterSetData.S
-                String.subproj/CFRegularExpression.c
-                String.subproj/CFRunArray.c
-                String.subproj/CFString.c
-                String.subproj/CFStringEncodings.c
-                String.subproj/CFStringScanner.c
-                String.subproj/CFStringTransform.c
-                String.subproj/CFStringUtilities.c
-                String.subproj/CFUniCharPropertyDatabase.S
-                String.subproj/CFUnicodeData.S
-                # StringEncodings
-                StringEncodings.subproj/CFBuiltinConverters.c
-                StringEncodings.subproj/CFICUConverters.c
-                StringEncodings.subproj/CFPlatformConverters.c
-                StringEncodings.subproj/CFStringEncodingConverter.c
-                StringEncodings.subproj/CFStringEncodingDatabase.c
-                StringEncodings.subproj/CFUniChar.c
-                StringEncodings.subproj/CFUnicodeDecomposition.c
-                StringEncodings.subproj/CFUnicodePrecomposition.c
-                # URL
-                URL.subproj/CFURLAccess.c
-                URL.subproj/CFURL.c
-                URL.subproj/CFURLComponents.c
-                URL.subproj/CFURLComponents_URIParser.c)
-target_compile_definitions(CoreFoundation
-                           PRIVATE
-                             $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_BITMAP="CharacterSets/CFCharacterSetBitmaps.bitmap">
-                             $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICHAR_DB="CharacterSets/CFUniCharPropertyDatabase.data">
-                             $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICODE_DATA_B="CharacterSets/CFUnicodeData-B.mapping">
-                             $<$<COMPILE_LANGUAGE:ASM>:CF_CHARACTERSET_UNICODE_DATA_L="CharacterSets/CFUnicodeData-L.mapping">)
-target_include_directories(CoreFoundation 
-                           PRIVATE
-                             ${PROJECT_SOURCE_DIR})
-target_link_libraries(CoreFoundation 
-                      PRIVATE
-                        Threads::Threads
-                        ${CMAKE_DL_LIBS}
-                        BlocksRuntime
-                        dispatch)
-if(CMAKE_SYSTEM_NAME STREQUAL Android)
-  target_link_libraries(CoreFoundation PRIVATE
-    log)
-endif()
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  target_link_libraries(CoreFoundation PRIVATE
-    ICU::uc
-    ICU::i18n)
-  if(ICU_DATA_FOUND)
-    target_link_libraries(CoreFoundation PRIVATE
-      ICU::data)
-  endif()
-endif()
-
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  if((NS_CURL_ASSUME_FEATURES_MISSING) OR (CURL_VERSION_STRING VERSION_LESS "7.32.0"))
-    add_compile_definitions($<$<COMPILE_LANGUAGE:C>:NS_CURL_MISSING_XFERINFOFUNCTION>)
-  endif()
-
-  if((NS_CURL_ASSUME_FEATURES_MISSING) OR (CURL_VERSION_STRING VERSION_LESS "7.30.0"))
-    add_compile_definitions($<$<COMPILE_LANGUAGE:C>:NS_CURL_MISSING_MAX_HOST_CONNECTIONS>)
-  endif()
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  add_library(CoreFoundationResources OBJECT
-    CoreFoundation.rc)
-  if(BUILD_SHARED_LIBS)
-    target_link_libraries(CoreFoundation PRIVATE CoreFoundationResources)
-  else()
-    target_link_libraries(CoreFoundation INTERFACE CoreFoundationResources)
-  endif()
-
-  # NOTE(compnerd) the WindowsOlsonMapping.plist and OlsonWindowsMapping.plist
-  # are embedded Windows resources that we use to map the Windows timezone to
-  # the Olson name.  Ensure that we rebuild on regeneration of the files.
-  add_custom_target(CoreFoundationWindowsTimeZonesPLists DEPENDS
-    WindowsOlsonMapping.plist
-    OlsonWindowsMapping.plist)
-  add_dependencies(CoreFoundation CoreFoundationWindowsTimeZonesPLists)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  target_link_libraries(CoreFoundation
-                        PRIVATE
-                          AdvAPI32
-                          Secur32
-                          User32
-                          mincore
-                          pathcch)
-  target_link_libraries(CFURLSessionInterface
-                        PRIVATE
-                          AdvAPI32
-                          Secur32
-                          User32
-                          mincore)
-  target_link_libraries(CFXMLInterface
-                        PRIVATE
-                          AdvAPI32
-                          Secur32
-                          User32
-                          mincore)
-endif()
-if(NOT CMAKE_SYSTEM_NAME STREQUAL Windows AND NOT CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  target_link_libraries(CoreFoundation
-                        PRIVATE
-                          m)
-endif()
-target_link_libraries(CoreFoundation
-                      PRIVATE
-                        dispatch)
-if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-  target_link_libraries(CoreFoundation
-                        PRIVATE
-                          icucore)
-  set_target_properties(CoreFoundation
-                        PROPERTIES LINK_FLAGS
-                          -Xlinker;-alias_list;-Xlinker;Base.subproj/DarwinSymbolAliases;-twolevel_namespace;-sectcreate;__UNICODE;__csbitmaps;CharacterSets/CFCharacterSetBitmaps.bitmap;-sectcreate;__UNICODE;__properties;CharacterSets/CFUniCharPropertyDatabase.data;-sectcreate;__UNICODE;__data;CharacterSets/CFUnicodeData-L.mapping;-segprot;__UNICODE;r;r)
-endif()
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-                        VERSION ${PROJECT_VERSION}
-                        SOVERSION ${PROJECT_VERSION_MAJOR})
-
-install(TARGETS
-          CoreFoundation
-        DESTINATION
-          "${CMAKE_INSTALL_FULL_LIBDIR}")
-
-# Needed to avoid double slash "//" when CMAKE_INSTALL_PREFIX set to "/" and DESTDIR used to relocate whole installation.
-# Double slash raise CMake error "file called with network path DESTINATION //System/Library/Frameworks".
-string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-
-install(DIRECTORY
-          ${CoreFoundation_FRAMEWORK_DIRECTORY}
-        DESTINATION
-          ${CMAKE_INSTALL_PREFIX}/Frameworks
-        USE_SOURCE_PERMISSIONS)
-#        PATTERN PrivateHeaders EXCLUDE)
+add_subdirectory(Sources)
+add_subdirectory(cmake/modules)
