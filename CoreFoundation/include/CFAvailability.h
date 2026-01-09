@@ -7,9 +7,9 @@
 	See http://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
 */
 
-#ifndef DEPLOYMENT_RUNTIME_SWIFT
-#define DEPLOYMENT_RUNTIME_SWIFT 1
-#endif
+//#ifndef DEPLOYMENT_RUNTIME_SWIFT
+//#define DEPLOYMENT_RUNTIME_SWIFT 1
+//#endif
 
 #if !defined(__COREFOUNDATION_CFAVAILABILITY__)
 #define __COREFOUNDATION_CFAVAILABILITY__ 1

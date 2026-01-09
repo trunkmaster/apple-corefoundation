@@ -25,6 +25,8 @@
 #include <stdio.h>
 #include <limits.h>
 
+#include "ForSwiftFoundationOnly.h"
+
 #if __has_include(<unistd.h>)
 #include <unistd.h>
 #endif

@@ -142,6 +142,8 @@ CF_PRIVATE const CFRuntimeClass __CFPlugInInstanceClass;
 
 CF_PRIVATE const CFRuntimeClass __CFPasteboardClass;
 CF_PRIVATE const CFRuntimeClass __CFUserNotificationClass;
+CF_PRIVATE const CFRuntimeClass __CFFileDescriptorClass;
+CF_PRIVATE const CFRuntimeClass __CFNotificationCenterClass;
 CF_PRIVATE const CFRuntimeClass __CFUUIDClass;
 CF_PRIVATE const CFRuntimeClass __CFLocaleClass;
 CF_PRIVATE const CFRuntimeClass __CFDateFormatterClass;

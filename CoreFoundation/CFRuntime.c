@@ -10,6 +10,8 @@
 
 #define ENABLE_ZOMBIES 1
 
+#include "ForSwiftFoundationOnly.h"
+
 #include "CFBase.h"
 #include "CFRuntime.h"
 #include "CFRuntime_Internal.h"
@@ -218,6 +220,8 @@ _CFClassTables __CFRuntimeClassTables __attribute__((aligned)) = {
     [_kCFRuntimeIDCFDate] = &__CFDateClass,
     [_kCFRuntimeIDCFTimeZone] = &__CFTimeZoneClass,
     [_kCFRuntimeIDCFKeyedArchiverUID] = &__CFKeyedArchiverUIDClass,
+    [_kCFRuntimeIDCFFileDescriptor] = &__CFFileDescriptorClass,
+    [_kCFRuntimeIDCFNotificationCenter] = &__CFNotificationCenterClass,
     
 #if TARGET_OS_OSX && DEPLOYMENT_RUNTIME_OBJC
     [_kCFRuntimeIDCFXMLParser] = &__CFXMLParserClass,

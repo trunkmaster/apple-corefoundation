@@ -37,15 +37,8 @@ if (NOT DEFINED CMAKE_C_COMPILER)
     set(CMAKE_C_COMPILER clang)
 endif()
 
-project(Foundation
-    LANGUAGES C Swift)
-
-option(FOUNDATION_SWIFTPM_DEPS "build Windows SwiftPM dependencies via CMake" NO)
-if(FOUNDATION_SWIFTPM_DEPS)
-    include(WindowsSwiftPMDependencies)
-    _foundation_setup_windows_swiftpm_dependencies_target()
-    return()
-endif()
+project(CoreFoundation
+    LANGUAGES C)
 
 if(NOT SWIFT_SYSTEM_NAME)
   if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
@@ -71,43 +64,32 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift)
 
 option(BUILD_SHARED_LIBS "build shared libraries" ON)
-option(BUILD_FULLY_STATIC "build fully static" NO)
+option(BUILD_FULLY_STATIC "build fully static" OFF)
 
 # Optionally build tools (on by default) but only when building shared libraries
 if(BUILD_SHARED_LIBS)
     option(FOUNDATION_BUILD_TOOLS "build tools" ON)
 endif()
 
-set(FOUNDATION_BUILD_NETWORKING_default ON)
-if(CMAKE_SYSTEM_NAME STREQUAL "WASI")
-    # Networking is not supported on WASI
-    set(FOUNDATION_BUILD_NETWORKING_default OFF)
-endif()
+set(FOUNDATION_BUILD_NETWORKING_default OFF)
 option(FOUNDATION_BUILD_NETWORKING "build FoundationNetworking"
     ${FOUNDATION_BUILD_NETWORKING_default})
 
 set(CMAKE_POSITION_INDEPENDENT_CODE YES)
 
 # Fetchable dependencies
-include(FetchContent)
-if (_SwiftFoundationICU_SourceDIR)
-    FetchContent_Declare(SwiftFoundationICU
-        SOURCE_DIR ${_SwiftFoundationICU_SourceDIR})
-else()
-    FetchContent_Declare(SwiftFoundationICU
-        GIT_REPOSITORY https://github.com/apple/swift-foundation-icu.git
-        GIT_TAG 0.0.9)
-endif()
+#include(FetchContent)
+#set(_SwiftFoundationICU_SourceDIR "/Users/me/Developer/nextspace.FreeBSD/swift-foundation-icu")
+#if (_SwiftFoundationICU_SourceDIR)
+#    FetchContent_Declare(SwiftFoundationICU
+#        SOURCE_DIR ${_SwiftFoundationICU_SourceDIR})
+##else()
+##    FetchContent_Declare(SwiftFoundationICU
+##        GIT_REPOSITORY https://github.com/apple/swift-foundation-icu.git
+##        GIT_TAG 0.0.9)
+#endif()
 
-if (_SwiftFoundation_SourceDIR)
-    FetchContent_Declare(SwiftFoundation
-        SOURCE_DIR ${_SwiftFoundation_SourceDIR})
-else()
-    FetchContent_Declare(SwiftFoundation
-        GIT_REPOSITORY https://github.com/apple/swift-foundation.git
-        GIT_TAG main)
-endif()
-FetchContent_MakeAvailable(SwiftFoundationICU SwiftFoundation)
+#FetchContent_MakeAvailable(SwiftFoundationICU)
 
 include(CheckLinkerFlag)
 include(CheckSymbolExists)
@@ -138,18 +120,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     "$<$<COMPILE_LANGUAGE:C,CXX>:-fno-omit-frame-pointer>")
 endif()
 
-# Precompute module triple for installation
-if(NOT SwiftFoundation_MODULE_TRIPLE)
-    set(module_triple_command "${CMAKE_Swift_COMPILER}" -print-target-info)
-    if(CMAKE_Swift_COMPILER_TARGET)
-        list(APPEND module_triple_command -target ${CMAKE_Swift_COMPILER_TARGET})
-    endif()
-    execute_process(COMMAND ${module_triple_command} OUTPUT_VARIABLE target_info_json)
-    string(JSON module_triple GET "${target_info_json}" "target" "moduleTriple")
-    set(SwiftFoundation_MODULE_TRIPLE "${module_triple}" CACHE STRING "swift module triple used for installed swiftmodule and swiftinterface files")
-    mark_as_advanced(SwiftFoundation_MODULE_TRIPLE)
-endif()
-
 # System dependencies
 
 # We know libdispatch is always unavailable on WASI
@@ -158,7 +128,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "WASI")
     find_package(dispatch CONFIG)
     if(NOT dispatch_FOUND)
         if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
-            set(DEFAULT_DISPATCH_INCLUDE_PATH "/usr/lib/swift")
+            set(DEFAULT_DISPATCH_INCLUDE_PATH "/usr/NextSpace/include")
         elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
             set(DEFAULT_DISPATCH_INCLUDE_PATH "$ENV{SDKROOT}usr/include")
         endif()
@@ -182,9 +152,8 @@ endif()
 
 # Common build flags (_CFURLSessionInterface, _CFXMLInterface, CoreFoundation)
 list(APPEND _Foundation_common_build_flags
-    "-DDEPLOYMENT_RUNTIME_SWIFT"
-    "-DCF_BUILDING_CF"
     "-DHAVE_STRUCT_TIMESPEC"
+    "-DCF_BUILDING_CF"
     "-Wno-shorten-64-to-32"
     "-Wno-deprecated-declarations"
     "-Wno-unreachable-code"
@@ -197,11 +166,11 @@ list(APPEND _Foundation_common_build_flags
     "-fblocks")
 
 if(NOT "${CMAKE_C_SIMULATE_ID}" STREQUAL "MSVC")
-    list(APPEND _Foundation_common_build_flags
-        "-fconstant-cfstrings"
-        "-fdollars-in-identifiers"
-        "-fno-common"
-        "-fcf-runtime-abi=swift")
+#    list(APPEND _Foundation_common_build_flags
+#        "-fconstant-cfstrings"
+#        "-fdollars-in-identifiers"
+#        "-fno-common"
+#        "-fcf-runtime-abi=swift")
 
     if(NOT CMAKE_SYSTEM_NAME STREQUAL OpenBSD)
         list(APPEND _Foundation_common_build_flags
@@ -224,23 +193,6 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug)
         "-DDEBUG")
 endif()
 
-# Swift build flags (Foundation, FoundationNetworking, FoundationXML)
-set(_Foundation_swift_build_flags)
-list(APPEND _Foundation_swift_build_flags
-    "-swift-version 6"
-    "-DDEPLOYMENT_RUNTIME_SWIFT"
-    "-Xfrontend"
-    "-require-explicit-sendable")
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WASI")
-    # Enable wasi-libc emulation features
-    set(WASI_EMULATION_DEFS _WASI_EMULATED_MMAN _WASI_EMULATED_SIGNAL _WASI_EMULATED_PROCESS_CLOCKS)
-    foreach(def ${WASI_EMULATION_DEFS})
-        list(APPEND _Foundation_swift_build_flags "SHELL:-Xcc -D${def}")
-        list(APPEND _Foundation_common_build_flags "-D${def}")
-    endforeach()
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
     list(APPEND _Foundation_common_build_flags
         "-D_GNU_SOURCE")
@@ -249,5 +201,5 @@ endif()
 include(GNUInstallDirs)
 include(FoundationSwiftSupport)
 
-add_subdirectory(Sources)
+add_subdirectory(CoreFoundation)
 add_subdirectory(cmake/modules)
