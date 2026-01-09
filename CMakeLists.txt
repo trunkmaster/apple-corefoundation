@@ -14,6 +14,9 @@
 
 cmake_minimum_required(VERSION 3.24)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CoreFoundation_VERSION 6.2.3)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 if(POLICY CMP0156)
@@ -125,19 +128,27 @@ endif()
 # We know libdispatch is always unavailable on WASI
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "WASI")
     find_package(LibRT)
-    find_package(dispatch CONFIG)
-    if(NOT dispatch_FOUND)
-        if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+    find_package(Dispatch)
+    if(NOT Dispatch_FOUND)
+        if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
             set(DEFAULT_DISPATCH_INCLUDE_PATH "/usr/NextSpace/include")
-        elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-            set(DEFAULT_DISPATCH_INCLUDE_PATH "$ENV{SDKROOT}usr/include")
         endif()
         set(DISPATCH_INCLUDE_PATH "${DEFAULT_DISPATCH_INCLUDE_PATH}" CACHE STRING "A path to where you can find libdispatch headers")
-        message("-- dispatch_DIR not found, using dispatch from SDK at ${DISPATCH_INCLUDE_PATH}")
+#        message("-- dispatch_DIR not found, using dispatch from SDK at ${DISPATCH_INCLUDE_PATH}")
         list(APPEND _Foundation_common_build_flags
             "-I${DISPATCH_INCLUDE_PATH}"
             "-I${DISPATCH_INCLUDE_PATH}/Block")
     endif()
+    find_package(ICU COMPONENTS uc i18n REQUIRED OPTIONAL_COMPONENTS data)
+    if(ICU_FOUND)
+        if (NOT EXISTS ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
+            message("-- ICU: make a symbolic link to ICU header files in ${PROJECT_SOURCE_DIR}")
+            execute_process(COMMAND /bin/ln -s /usr/local/include/unicode 
+                                        ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
+        endif()
+    else()
+        find_package(CURL REQUIRED)
+  endif()
 endif()
 if(ANDROID)
   # LibXml2 looks for the Threads package, so
