@@ -17,8 +17,6 @@ add_framework(CoreFoundation
                 SHARED
               FRAMEWORK_DIRECTORY
                 CoreFoundation_FRAMEWORK_DIRECTORY
-              MODULE_MAP
-                include/module.modulemap
               PRIVATE_HEADERS
                 internalInclude/CFAsmMacros.h
                 internalInclude/CFBasicHash.h
@@ -279,13 +277,11 @@ set_property(GLOBAL APPEND PROPERTY Foundation_EXPORTS CoreFoundation)
 # endif()
 
 install(DIRECTORY
-            include/
+            CoreFoundation.framework
         DESTINATION
-            lib/${swift}/CoreFoundation)
+            ${CMAKE_INSTALL_PREFIX}/Frameworks)
 
-# if(NOT BUILD_SHARED_LIBS)
-#     install(TARGETS CoreFoundation
-#         ARCHIVE DESTINATION lib/swift_static/${SWIFT_SYSTEM_NAME}
-#         LIBRARY DESTINATION lib/swift_static/${SWIFT_SYSTEM_NAME}
-#         RUNTIME DESTINATION bin)
-# endif()
+# install(TARGETS CoreFoundation
+#     ARCHIVE DESTINATION lib}
+#     LIBRARY DESTINATION lib}
+#     RUNTIME DESTINATION bin)

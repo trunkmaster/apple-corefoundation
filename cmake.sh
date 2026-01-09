@@ -10,4 +10,5 @@ cmake .. \
         \
         -DCMAKE_SKIP_RPATH=ON \
         -DCMAKE_BUILD_TYPE=Debug \
-        -Ddispatch_DIR=/Users/me/Developer/nextspace.FreeBSD/swift-corelibs-libdispatch/.build/cmake/modules
+        -DDispatch_INCLUDE_DIR=/usr/NextSpace/include
+#        -Ddispatch_DIR=/Users/me/Developer/nextspace.FreeBSD/swift-corelibs-libdispatch/.build/cmake/modules \
