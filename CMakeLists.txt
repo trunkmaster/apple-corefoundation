@@ -41,6 +41,7 @@ if (NOT DEFINED CMAKE_C_COMPILER)
 endif()
 
 project(CoreFoundation
+    VERSION 6.2.3
     LANGUAGES C)
 
 if(NOT SWIFT_SYSTEM_NAME)
@@ -143,8 +144,13 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "WASI")
     if(ICU_FOUND)
         if (NOT EXISTS ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
             message("-- ICU: make a symbolic link to ICU header files in ${PROJECT_SOURCE_DIR}")
-            execute_process(COMMAND /bin/ln -s /usr/local/include/unicode 
-                                        ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
+            if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+                execute_process(COMMAND /bin/ln -s /usr/local/include/unicode
+                                            ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
+            else()
+                execute_process(COMMAND /bin/ln -s /usr/include/unicode
+                                            ${PROJECT_SOURCE_DIR}/CoreFoundation/include/_foundation_unicode)
+            endif()
         endif()
     else()
         find_package(CURL REQUIRED)

@@ -255,6 +255,10 @@ target_link_libraries(CoreFoundation
         icui18n
         dispatch)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+                        VERSION ${PROJECT_VERSION}
+                        SOVERSION ${PROJECT_VERSION_MAJOR})
+
 if(CMAKE_SYSTEM_NAME STREQUAL "WASI")
     # On WASI, we use vendored BlocksRuntime instead of the one from libdispatch
     add_subdirectory(BlockRuntime)
