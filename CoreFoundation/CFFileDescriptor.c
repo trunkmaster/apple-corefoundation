@@ -47,7 +47,7 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
 {
   dispatch_source_t source;
 
-  CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
+  // CFLog(kCFLogLevelDebug, CFSTR("CFFileDescriptor->__CFFDCreateSource(%i)"), f->_fd);
 
   if (callBackType == kCFFileDescriptorReadCallBack && !f->_read_source) {
     source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, f->_fd, 0, dispatch_get_current_queue());
@@ -223,14 +223,14 @@ CFFileDescriptorRef CFFileDescriptorCreate(CFAllocatorRef allocator, CFFileDescr
   CFFileDescriptorRef memory;
 
   if (!callout) {
-    CFLog(kCFLogLevelError, CFSTR("*** CFileDescriptiorCreate: no callback was specified."));
+    CFLog(kCFLogLevelError, CFSTR("*** CFileDescriptorCreate: no callback was specified."));
     return NULL;
   }
 
   size = sizeof(struct __CFFileDescriptor) - sizeof(CFRuntimeBase);
   memory = (CFFileDescriptorRef)_CFRuntimeCreateInstance(allocator, CFFileDescriptorGetTypeID(), size, NULL);
   if (!memory) {
-    CFLog(kCFLogLevelError, CFSTR("*** CFileDescriptiorCreate: unable to allocate memory!"));
+    CFLog(kCFLogLevelError, CFSTR("*** CFileDescriptorCreate: unable to allocate memory!"));
     return NULL;
   }
 
@@ -294,7 +294,7 @@ CFRunLoopSourceRef CFFileDescriptorCreateRunLoopSource(CFAllocatorRef allocator,
 
     __CFUnlock(&f->_lock);
   } else {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptorCreateRunLoopSource: CFFileDescriptorRef is invalid"));
+    CFLog(kCFLogLevelError, CFSTR("*** CFFileDescriptorCreateRunLoopSource: CFFileDescriptorRef is invalid"));
   }
 
   return result;
@@ -325,7 +325,7 @@ void CFFileDescriptorGetContext(CFFileDescriptorRef f, CFFileDescriptorContext *
 void CFFileDescriptorEnableCallBacks(CFFileDescriptorRef f, CFOptionFlags callBackTypes)
 {
   if (!CFFileDescriptorIsValid(f) || !__CFFDIsValid(f) || !callBackTypes) {
-    CFLog(kCFLogLevelError, CFSTR("CFFileDescriptorEnableCallBacks ERROR: invalid descriptor!"));
+    CFLog(kCFLogLevelError, CFSTR("*** CFFileDescriptorEnableCallBacks ERROR: invalid descriptor!"));
     return;
   }
 
