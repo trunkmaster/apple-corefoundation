@@ -268,24 +268,20 @@ endif()
 
 set_property(GLOBAL APPEND PROPERTY Foundation_EXPORTS CoreFoundation)
 
-# Copy Headers to known directory for direct client (XCTest) test builds
-# file(COPY
-#         include/
-#     DESTINATION
-#         ${CMAKE_BINARY_DIR}/_CModulesForClients/CoreFoundation)
 
-# if(NOT BUILD_SHARED_LIBS)
-#     set(swift swift_static)
-# else()
-#     set(swift swift)
-# endif()
+### Framework installation
+install(TARGETS
+          CoreFoundation
+        DESTINATION
+          "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+# Needed to avoid double slash "//" when CMAKE_INSTALL_PREFIX set to "/" and DESTDIR used to relocate whole installation.
+# Double slash raise CMake error "file called with network path DESTINATION //System/Library/Frameworks".
+string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 install(DIRECTORY
-            CoreFoundation.framework
+          ${CoreFoundation_FRAMEWORK_DIRECTORY}
         DESTINATION
-            ${CMAKE_INSTALL_PREFIX}/Frameworks)
-
-# install(TARGETS CoreFoundation
-#     ARCHIVE DESTINATION lib}
-#     LIBRARY DESTINATION lib}
-#     RUNTIME DESTINATION bin)
+          ${CMAKE_INSTALL_PREFIX}/Frameworks
+        USE_SOURCE_PERMISSIONS)
+#        PATTERN PrivateHeaders EXCLUDE)
