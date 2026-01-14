@@ -57,9 +57,8 @@ dispatch_source_t __CFFDCreateSource(CFFileDescriptorRef f, CFOptionFlags callBa
 
   if (source) {
     dispatch_source_set_event_handler(source, ^{
-      /* size_t estimated = dispatch_source_get_data(source); */
-      /* CFLog(kCFLogLevelError, CFSTR("%i amount of data is ready on descriptor %i (runloop: %li)"), */
-      /*       estimated, f->_fd, (long)f->_runLoop); */
+      // size_t estimated = dispatch_source_get_data(source);
+      // CFLog(kCFLogLevelError, CFSTR("%i amount of data is ready on descriptor %i (runloop: %li)"), estimated, f->_fd, (long)f->_runLoop);
 
       // Each call back is one-shot, and must be re-enabled if you want to get another one.
       __CFFDSuspendSource(f, callBackType);
@@ -121,18 +120,14 @@ void __CFFDRemoveSource(CFFileDescriptorRef f, CFOptionFlags callBackType)
 void __CFFDEnableSources(CFFileDescriptorRef f, CFOptionFlags callBackTypes)
 {
   if (callBackTypes & kCFFileDescriptorReadCallBack && f->_read_source && f->_read_source_suspended != FALSE) {
-    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - READ"), f->_fd);
+    // CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - READ"), f->_fd);
     dispatch_resume(f->_read_source);
     f->_read_source_suspended = FALSE;
-  } else {
-    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - NOT READ"), f->_fd);
   }
   if (callBackTypes & kCFFileDescriptorWriteCallBack && f->_write_source && f->_write_source_suspended != FALSE) {
-    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - WRITE"), f->_fd);
+    // CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - WRITE"), f->_fd);
     dispatch_resume(f->_write_source);
     f->_write_source_suspended = FALSE;
-  } else {
-    CFLog(kCFLogLevelInfo, CFSTR("CFFileDescriptor->__CFFDEnabledSource(%i) - NOT WRITE"), f->_fd);
   }
 }
 
@@ -196,13 +191,13 @@ static void __CFFileDescriptorDeallocate(CFTypeRef cf)
 const CFRuntimeClass __CFFileDescriptorClass = {
     0,
     "CFFileDescriptor",
-    NULL, // init
-    NULL, // copy
+    NULL,  // init
+    NULL,  // copy
     __CFFileDescriptorDeallocate,
-    NULL, //__CFDataEqual,
-    NULL, //__CFDataHash,
-    NULL, //
-    NULL, //__CFDataCopyDescription
+    NULL,  //__CFDataEqual,
+    NULL,  //__CFDataHash,
+    NULL,  //
+    NULL,  //__CFDataCopyDescription
 };
 
 // register the type with the CF runtime
